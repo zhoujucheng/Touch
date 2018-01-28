@@ -5,7 +5,7 @@
         <import type="android.view.View" />
         <variable
             name="viewModel"
-            type="com.dnnt.touch.ui.login.LoginVM" />
+            type="com.dnnt.touch.ui.login.LoginViewModel" />
     </data>
 
     <LinearLayout

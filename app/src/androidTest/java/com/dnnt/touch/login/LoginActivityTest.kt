@@ -6,11 +6,13 @@ import org.junit.runner.RunWith
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.action.ViewActions.typeText
+import android.support.test.espresso.assertion.ViewAssertions.matches
 import com.dnnt.touch.R
 import org.junit.Rule
 import android.support.test.rule.ActivityTestRule
 import android.support.test.espresso.matcher.ViewMatchers.*
 import com.dnnt.touch.ui.login.LoginActivity
+import org.hamcrest.Matchers.not
 
 /**
  * Created by dnnt on 18-1-26.
@@ -30,9 +32,10 @@ class LoginActivityTest{
     fun login(){
         onView(withId(R.id.user_name)).perform(typeText("123456@163.com"))
         onView(withId(R.id.pwd)).perform(typeText("123456"))
+        onView(withId(R.id.login_progress)).check(matches(not(isDisplayed())))
         onView(withId(R.id.login_btn)).perform(click())
-//        onView(withId())
-//        onView(withText("empty")).inRoot(withDecorView(not(mActivityTestRule.activity.window.decorView)))
-//                .check(matches(isDisplayed()))
+        onView(withId(R.id.login_progress)).check(matches(isDisplayed()))
+        Thread.sleep(1000)
+        onView(withId(R.id.login_progress)).check(matches(not(isDisplayed())))
     }
 }

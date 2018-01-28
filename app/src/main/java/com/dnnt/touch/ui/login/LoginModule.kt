@@ -1,7 +1,5 @@
 package com.dnnt.touch.ui.login
 
-import com.dnnt.touch.di.ActivityScoped
-import dagger.Binds
 import dagger.Module
 
 /**
@@ -9,10 +7,8 @@ import dagger.Module
  */
 @Module
 abstract class LoginModule {
-//    @FragmentScoped
-//    @ContributesAndroidInjector
-//    internal abstract fun tasksFragment(): TasksFragment
 
-    @ActivityScoped
-    @Binds abstract fun loginPresenter(presenter: LoginPresenter): LoginContract.Presenter
+//    @ActivityScoped
+//    @Binds abstract fun loginPresenter(presenter: LoginPresenter): LoginContract.Presenter
+
 }

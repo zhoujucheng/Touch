@@ -1,6 +1,5 @@
 package com.dnnt.touch.util
 
-import android.content.Context
 import android.widget.Toast
 import com.dnnt.touch.MyApplication
 

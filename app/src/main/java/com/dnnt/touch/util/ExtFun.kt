@@ -1,9 +1,8 @@
-package com.dnnt.touch
+package com.dnnt.touch.util
 
 import android.text.TextUtils
+import com.dnnt.touch.R
 import com.dnnt.touch.been.Json
-import com.dnnt.touch.util.NetworkNotAvailableException
-import com.dnnt.touch.util.toast
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.Observable
 import io.reactivex.annotations.NonNull
