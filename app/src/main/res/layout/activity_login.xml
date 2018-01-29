@@ -19,15 +19,6 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="com.dnnt.touch.ui.login.LoginActivity">
 
-        <!-- Login progress -->
-        <ProgressBar
-            android:id="@+id/login_progress"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:visibility="@{viewModel.showProgress ? View.VISIBLE : View.GONE}" />
-
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -38,6 +29,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_user"
                 android:maxLines="1"
+                android:maxLength="11"
                 android:singleLine="true" />
 
         </android.support.design.widget.TextInputLayout>
@@ -52,6 +44,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_pwd"
                 android:maxLines="1"
+                android:maxLength="16"
                 android:singleLine="true" />
 
         </android.support.design.widget.TextInputLayout>
@@ -64,6 +57,22 @@
             android:layout_marginTop="16dp"
             android:text="@string/btn_login"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/go_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/user_register"
+            android:textColor="@color/link"/>
+
+        <TextView
+            android:id="@+id/go_reset_pwd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/forgot_pwd"
+            android:textColor="@color/link"/>
 
     </LinearLayout>
 </layout>

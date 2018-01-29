@@ -37,20 +37,21 @@ class AppModule {
     @Provides
     @Singleton
     fun provideRetrofit(executorService: ExecutorService, scheduler: MyScheduler) : Retrofit{
-        val clientBuild = OkHttpClient.Builder()
+        val clientBuilder = OkHttpClient.Builder()
                 .addInterceptor{
                     if (!NetworkReceiver.isNetUsable()){
                         throw NetworkNotAvailableException()
                     }
+//                    val request = it.request().newBuilder().addHeader().build()
                     return@addInterceptor it.proceed(it.request())
                 }
                 .dispatcher(Dispatcher(executorService))
         if (BuildConfig.DEBUG){
             val loggingInterceptor = HttpLoggingInterceptor()
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-            clientBuild.addNetworkInterceptor(loggingInterceptor)
+            clientBuilder.addNetworkInterceptor(loggingInterceptor)
         }
-        val okHttpClient = clientBuild.build()
+        val okHttpClient = clientBuilder.build()
         val gson = GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create()
         return Retrofit.Builder()
                 .baseUrl(BASE_URL)

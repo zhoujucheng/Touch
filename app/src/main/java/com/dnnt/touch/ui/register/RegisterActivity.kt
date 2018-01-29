@@ -1,14 +1,23 @@
 package com.dnnt.touch.ui.register
 
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
+import android.content.Context
 import com.dnnt.touch.R
+import com.dnnt.touch.ui.login.base.BaseActivity
+import javax.inject.Inject
 
-class RegisterActivity : AppCompatActivity() {
+class RegisterActivity : BaseActivity<RegisterViewModel>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register)
+
+    override fun init() {
+
+
+    }
+
+    override fun getLayoutId(): Int = R.layout.activity_register
+
+    @Inject
+    override fun setViewModel(viewModel: RegisterViewModel) {
+        mViewModel = viewModel
     }
 
 }

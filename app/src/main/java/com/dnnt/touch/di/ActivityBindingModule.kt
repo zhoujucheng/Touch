@@ -2,6 +2,7 @@ package com.dnnt.touch.di
 
 import com.dnnt.touch.ui.login.LoginActivity
 import com.dnnt.touch.ui.login.LoginModule
+import com.dnnt.touch.ui.register.RegisterActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -12,5 +13,9 @@ import dagger.android.ContributesAndroidInjector
 abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = [LoginModule::class])
-    internal abstract fun loginActivity(): LoginActivity
+    abstract fun loginActivity(): LoginActivity
+
+    @ActivityScoped
+    @ContributesAndroidInjector
+    abstract fun registerActivity(): RegisterActivity
 }
