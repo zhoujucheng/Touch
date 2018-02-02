@@ -1,7 +1,7 @@
 package com.dnnt.touch.ui.login
 
 import android.arch.lifecycle.Observer
-import com.dnnt.touch.ui.login.base.BaseActivity
+import com.dnnt.touch.ui.base.BaseActivity
 import com.dnnt.touch.R
 import com.dnnt.touch.ui.register.RegisterActivity
 import com.dnnt.touch.util.DialogObserver
@@ -28,7 +28,7 @@ class LoginActivity : BaseActivity<LoginViewModel>(){
         val dialog = getProgressDialog(this,getString(R.string.login_ing))
         val observer = DialogObserver(dialog)
         mViewModel.mLoading.observe(this,observer)
-        mViewModel.login(user_name.text.toString(),pwd.text.toString())
+        mViewModel.login(user.text.toString(),pwd.text.toString())
     }
 
     override fun getLayoutId(): Int = R.layout.activity_login

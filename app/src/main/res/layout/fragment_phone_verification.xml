@@ -1,0 +1,61 @@
+<layout>
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.dnnt.touch.ui.register.RegisterViewModel" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.dnnt.touch.ui.register.PhoneVerificationFragment">
+
+        <EditText
+            android:id="@+id/phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:maxLines="1"
+            android:maxLength="11"
+            android:hint="@string/user_phone"/>
+
+        <EditText
+            android:id="@+id/verification_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:maxLength="6"
+            android:hint="@string/verification_code"
+            app:layout_constraintTop_toBottomOf="@+id/phone"/>
+
+        <TextView
+            android:id="@+id/get_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:gravity="center"
+            android:text="@{viewModel.getCodeText}"
+            app:layout_constraintStart_toEndOf="@+id/verification_code"
+            app:layout_constraintTop_toTopOf="@+id/verification_code"
+            app:layout_constraintBottom_toBottomOf="@id/verification_code"/>
+
+        <Button
+            android:id="@+id/next_step"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/next_step"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/verification_code" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</layout>
+
+

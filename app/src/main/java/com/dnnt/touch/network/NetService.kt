@@ -11,7 +11,19 @@ import retrofit2.http.*
  */
 
 interface NetService {
-    @POST("login")
+    @POST("user/login")
     @FormUrlEncoded
     fun login(@FieldMap map: Map<String,String>): Observable<Response<Json<User>>>
+
+    @POST("user/getVerificationCode")
+    @FormUrlEncoded
+    fun getVerificationCode(@Field("phone") phone: String): Observable<Response<Json<String>>>
+
+    @POST
+    @FormUrlEncoded
+    fun codeVerification(@Field("code") verificationCode: String): Observable<Response<Json<String>>>
+
+    @POST("user/register")
+    @FormUrlEncoded
+    fun register(): Observable<Response<Json<String>>>
 }

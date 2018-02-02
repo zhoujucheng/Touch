@@ -16,8 +16,7 @@ import java.io.IOException
 fun <T : Json<U>,U> Observable<Response<T>>.subscribe
         (onSuccess: (U?) -> Unit, onFailure: (String) -> Unit, @NonNull onComplete: () -> Unit,
          @NonNull onSubscribe: (Disposable) -> Unit ) =
-        subscribe(
-                {
+        subscribe({
                     if (it.isSuccessful) {
                         val t = it.body()
                         if (t != null){
@@ -37,8 +36,7 @@ fun <T : Json<U>,U> Observable<Response<T>>.subscribe
                         msg = it.raw().code().toString() + " " + msg
                         toast(msg)
                     }
-                },
-                {
+                }, {
                     when (it) {
                         is NetworkNotAvailableException -> toast(R.string.network_not_available)
                         is IOException, is HttpException -> toast(R.string.network_error)
@@ -51,6 +49,6 @@ fun <T : Json<U>,U> Observable<Response<T>>.subscribe
                     it.printStackTrace()
                 }, onComplete, onSubscribe)!!
 
-fun <T : Json<U>,U> Observable<Response<T>>.subscribe(onFailure: (String) -> Unit, onSuccess: (U?) -> Unit) =
+fun <T : Json<U>,U> Observable<Response<T>>.subscribe(onSuccess: (U?) -> Unit, onFailure: (String) -> Unit) =
     subscribe(onSuccess, onFailure, {}, {})
 

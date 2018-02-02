@@ -1,4 +1,4 @@
-package com.dnnt.touch.ui.login.base
+package com.dnnt.touch.ui.base
 
 import android.arch.lifecycle.ViewModel
 

@@ -1,10 +1,9 @@
 package com.dnnt.touch.ui.login
 
 import android.arch.lifecycle.MutableLiveData
-import android.databinding.ObservableBoolean
 import android.text.TextUtils
 import android.util.Log
-import com.dnnt.touch.ui.login.base.BaseViewModel
+import com.dnnt.touch.ui.base.BaseViewModel
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
 import com.dnnt.touch.been.User
@@ -36,10 +35,12 @@ class LoginViewModel @Inject constructor(netService: NetService): BaseViewModel(
                         .delay(1000,TimeUnit.MILLISECONDS,MyApplication.mScheduler)
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
-                        .subscribe({ toast(R.string.login_fail) }){ u: User? ->
+                        .subscribe({ u: User? ->
                             MyApplication.mUser = u
                             mLoginEvent.call()
-                        }
+                        }, {
+                            toast(R.string.login_fail)
+                        })
 
             }
         }

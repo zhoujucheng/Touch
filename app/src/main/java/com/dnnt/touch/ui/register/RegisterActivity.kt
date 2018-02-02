@@ -1,15 +1,30 @@
 package com.dnnt.touch.ui.register
 
-import android.content.Context
+import android.arch.lifecycle.Observer
 import com.dnnt.touch.R
-import com.dnnt.touch.ui.login.base.BaseActivity
+import com.dnnt.touch.ui.base.BaseActivity
 import javax.inject.Inject
 
 class RegisterActivity : BaseActivity<RegisterViewModel>() {
 
+    @Inject
+    lateinit var phoneFragmentProvider: dagger.Lazy<PhoneVerificationFragment>
+    @Inject
+    lateinit var registerFragmentProvider: dagger.Lazy<RegisterFragment>
 
     override fun init() {
 
+        supportFragmentManager.beginTransaction()
+                .add(R.id.container, phoneFragmentProvider.get())
+                .commit()
+
+        mViewModel.mGoRegisterEvent.observe(this, Observer<Void> {
+            supportFragmentManager.beginTransaction()
+                    .addToBackStack(null)
+                    .hide(phoneFragmentProvider.get())
+                    .add(R.id.container, registerFragmentProvider.get())
+                    .commit()
+        })
 
     }
 
