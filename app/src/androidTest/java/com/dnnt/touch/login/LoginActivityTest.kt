@@ -30,12 +30,8 @@ class LoginActivityTest{
 
     @Test(timeout = 10000)
     fun login(){
-        onView(withId(R.id.user_name)).perform(typeText("123456@163.com"))
-        onView(withId(R.id.pwd)).perform(typeText("123456"))
-        onView(withId(R.id.login_progress)).check(matches(not(isDisplayed())))
+        onView(withId(R.id.user_phone)).perform(typeText("18255132583"))
+        onView(withId(R.id.password)).perform(typeText("123456"))
         onView(withId(R.id.login_btn)).perform(click())
-        onView(withId(R.id.login_progress)).check(matches(isDisplayed()))
-        Thread.sleep(1000)
-        onView(withId(R.id.login_progress)).check(matches(not(isDisplayed())))
     }
 }

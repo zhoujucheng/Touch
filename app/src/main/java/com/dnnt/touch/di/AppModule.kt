@@ -30,6 +30,7 @@ class AppModule {
     @Provides
     fun context(application: MyApplication): Context = application
 
+
     @Provides
     @Singleton
     fun provideCachedThreadPool(): ExecutorService = Executors.newCachedThreadPool()
@@ -38,6 +39,7 @@ class AppModule {
     @Singleton
     fun provideRetrofit(executorService: ExecutorService, scheduler: MyScheduler) : Retrofit{
         val clientBuilder = OkHttpClient.Builder()
+                //网络判断拦截器
                 .addInterceptor{
                     if (!NetworkReceiver.isNetUsable()){
                         throw NetworkNotAvailableException()
@@ -46,6 +48,7 @@ class AppModule {
                     return@addInterceptor it.proceed(it.request())
                 }
                 .dispatcher(Dispatcher(executorService))
+
         if (BuildConfig.DEBUG){
             val loggingInterceptor = HttpLoggingInterceptor()
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY

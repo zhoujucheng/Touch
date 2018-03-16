@@ -6,4 +6,6 @@
 
     <color name="link">#6495ED</color>
 
+    <color name="error">#FF0000</color>
+
 </resources>

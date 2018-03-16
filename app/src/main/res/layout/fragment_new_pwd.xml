@@ -1,0 +1,18 @@
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.dnnt.touch.ui.register.RegisterViewModel" />
+    </data>
+
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.dnnt.touch.ui.resetpassword.NewPwdFragment">
+
+        <include layout="@layout/password_set" />
+
+    </FrameLayout>
+</layout>
+

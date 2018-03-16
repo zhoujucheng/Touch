@@ -13,21 +13,17 @@ import dagger.android.support.DaggerFragment
 
 
 /**
- * A simple [Fragment] subclass.
+ * A base [Fragment] class.
  */
 abstract class BaseFragment<T: ViewModel> : DaggerFragment() {
 
     protected lateinit var mViewModel: T
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val dataBinding: ViewDataBinding = DataBindingUtil.inflate<ViewDataBinding>(inflater,getLayoutId(),container,false)
         val method = dataBinding.javaClass.getDeclaredMethod("setViewModel", mViewModel.javaClass)
         method.invoke(dataBinding, mViewModel)
-
         return dataBinding.root
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

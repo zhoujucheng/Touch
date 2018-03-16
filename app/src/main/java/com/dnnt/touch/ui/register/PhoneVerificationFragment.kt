@@ -1,49 +1,48 @@
 package com.dnnt.touch.ui.register
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
-import android.view.View
 import com.dnnt.touch.R
 import com.dnnt.touch.di.ActivityScoped
-import com.dnnt.touch.network.NetService
 import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_phone_verification.*
 import javax.inject.Inject
 
-@ActivityScoped
 class PhoneVerificationFragment @Inject constructor() : BaseFragment<RegisterViewModel>() {
 
+    @SuppressLint("SetTextI18n")
     override fun init() {
 
-        mViewModel.mNextStepEvent.observe(activity, Observer<Void> {
+        mViewModel.mVerificationEvent.observe(this, Observer<Void> {
             mViewModel.codeVerification(verification_code.text.toString())
         })
 
-        next_step.setOnClickListener { mViewModel.mNextStepEvent.call() }
+        next_step.setOnClickListener { mViewModel.mVerificationEvent.call() }
 
         get_code.setOnClickListener {
             if (NetworkReceiver.isNetUsable()){
+                countDown()
+                get_code.isClickable = false
+                get_code.text = "60"
                 mViewModel.getVerificationCode(phone.text.toString())
-                it.isClickable = false
-                mViewModel.getCodeText.set("60")
-                countDown(it)
             }
         }
 
     }
 
-    private fun countDown(v: View){
+    private fun countDown(){
         if (activity == null || activity.isFinishing){
             return
         }
-        v.postDelayed({
-            val left = mViewModel.getCodeText.get().toInt() - 1
+        get_code.postDelayed({
+            val left = get_code.text.toString().toInt() - 1
             if (left <= 0){
-                mViewModel.getCodeText.set(getString(R.string.get_verification_code))
-                v.isClickable = true
+                get_code.setText(R.string.get_verification_code)
+                get_code.isClickable = true
             }else{
-                countDown(v)
-                mViewModel.getCodeText.set(left.toString())
+                countDown()
+                get_code.text = left.toString()
             }
         },1000)
     }

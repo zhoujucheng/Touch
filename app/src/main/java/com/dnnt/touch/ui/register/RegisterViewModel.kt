@@ -1,17 +1,18 @@
 package com.dnnt.touch.ui.register
 
 import android.arch.lifecycle.MutableLiveData
-import android.databinding.ObservableField
+import android.text.TextUtils
+import com.dnnt.touch.MyApplication
 import com.dnnt.touch.di.ActivityScoped
 import com.dnnt.touch.ui.base.BaseViewModel
 import com.dnnt.touch.util.SingleLiveEvent
-import com.dnnt.touch.util.getString
 import javax.inject.Inject
 import com.dnnt.touch.R
 import com.dnnt.touch.network.NetService
 import com.dnnt.touch.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import com.dnnt.touch.util.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by dnnt on 18-1-29.
@@ -22,26 +23,66 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
     @Inject
     lateinit var netService: NetService
 
+    val mVerificationEvent = SingleLiveEvent<Void>()
     val mNextStepEvent = SingleLiveEvent<Void>()
-    val mGoRegisterEvent = SingleLiveEvent<Void>()
-    val getCodeText = ObservableField<String>(getString(R.string.get_verification_code))
+    val mFinishEvent = SingleLiveEvent<Void>()
+    val mLoading = MutableLiveData<Boolean>()
 
     fun getVerificationCode(phone: String){
 
+        if (TextUtils.isEmpty(phone)){
+            toast(R.string.phone_empty)
+            return
+        }
+
+        netService.getVerificationCode(phone)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({_: String? ->
+                    toast(R.string.send_success)
+                },{
+                    toast(R.string.send_fail)
+                })
     }
 
-    fun register(){
+    fun register(userName: String, password: String, password1: String){
+        when {
+            TextUtils.isEmpty(userName) -> toast(R.string.user_name_empty)
+            password.length < 6 -> toast(R.string.password_least_six)
+            password != password1 -> toast(R.string.password_not_equal)
+            else -> {
+                val map = mapOf(Pair(USER_NAME,userName), Pair(PASSWORD,password))
+                mLoading.value = true
+                netService.register(map)
+                        .delay(1000, TimeUnit.MILLISECONDS, MyApplication.mScheduler)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doFinally{ mLoading.value = false }
+                        .subscribe({
+                            toast(R.string.register_success)
+                            mFinishEvent.call()
+                        },{
+                            toast(R.string.register_fail)
+                        })
+            }
+        }
 
     }
 
     fun codeVerification(verificationCode: String){
+        if (verificationCode.length != 6){
+            toast(R.string.wrong_verification_code)
+            return
+        }
         netService.codeVerification(verificationCode)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ _: String? ->
-                    mGoRegisterEvent.call()
+                    mNextStepEvent.call()
                 }, {
                     toast(R.string.wrong_verification_code)
                 })
+    }
+
+    fun resetPassword(password: String, password1: String){
+//        TODO
     }
 
 }

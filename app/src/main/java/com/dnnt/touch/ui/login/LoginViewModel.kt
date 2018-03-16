@@ -24,12 +24,12 @@ class LoginViewModel @Inject constructor(netService: NetService): BaseViewModel(
     val mLoginEvent = SingleLiveEvent<Void>()
     val mLoading = MutableLiveData<Boolean>()
 
-    fun login(userName: String, pwd: String){
+    fun login(userPhone: String, password: String){
         when {
-            TextUtils.isEmpty(userName) -> toast(R.string.user_not_empty)
-            pwd.length < 6 -> toast(R.string.wrong_pwd)
+            TextUtils.isEmpty(userPhone) -> toast(R.string.user_phone_empty)
+            password.length < 6 -> toast(R.string.wrong_password)
             else -> {
-                val map = mapOf(Pair(USER_NAME,userName), Pair(PASSWORD,pwd))
+                val map = mapOf(Pair(PHONE,userPhone), Pair(PASSWORD,password))
                 mLoading.value = true
                 mNetService.login(map)
                         .delay(1000,TimeUnit.MILLISECONDS,MyApplication.mScheduler)
@@ -41,7 +41,6 @@ class LoginViewModel @Inject constructor(netService: NetService): BaseViewModel(
                         }, {
                             toast(R.string.login_fail)
                         })
-
             }
         }
     }

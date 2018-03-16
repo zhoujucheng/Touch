@@ -1,16 +1,33 @@
 package com.dnnt.touch.ui.register
 
+import android.arch.lifecycle.Observer
 import com.dnnt.touch.R
 import com.dnnt.touch.di.ActivityScoped
 import com.dnnt.touch.ui.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_register.*
+import com.dnnt.touch.util.DialogObserver
+import com.dnnt.touch.util.getProgressDialog
+import kotlinx.android.synthetic.main.password_set.*
 import javax.inject.Inject
 
-@ActivityScoped
 class RegisterFragment @Inject constructor() : BaseFragment<RegisterViewModel>() {
 
     override fun init() {
-        register.setOnClickListener { mViewModel.register() }
+
+        password_layout.hint = getString(R.string.hint_register_password)
+        password1_layout.hint = getString(R.string.user_password_again)
+        complete.setText(R.string.register)
+
+        complete.setOnClickListener {
+//            TODO
+//            mViewModel.register()
+        }
+
+    }
+
+    fun registerClick(){
+        val dialog = getProgressDialog(this.context,getString(R.string.registering))
+        val observer = DialogObserver(dialog)
+        mViewModel.mLoading.observe(this,observer)
     }
 
     override fun getLayoutId(): Int = R.layout.fragment_register
