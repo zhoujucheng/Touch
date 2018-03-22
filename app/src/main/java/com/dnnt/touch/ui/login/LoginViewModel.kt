@@ -2,10 +2,11 @@ package com.dnnt.touch.ui.login
 
 import android.arch.lifecycle.MutableLiveData
 import android.text.TextUtils
-import android.util.Log
 import com.dnnt.touch.ui.base.BaseViewModel
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
+import com.dnnt.touch.base.MyScheduler
+import com.dnnt.touch.base.SingleLiveEvent
 import com.dnnt.touch.been.User
 import com.dnnt.touch.di.ActivityScoped
 import com.dnnt.touch.network.NetService
@@ -18,11 +19,13 @@ import javax.inject.Inject
  * Created by dnnt on 18-1-26.
  */
 @ActivityScoped
-class LoginViewModel @Inject constructor(netService: NetService): BaseViewModel() {
+class LoginViewModel @Inject constructor(): BaseViewModel() {
 
-    private val mNetService = netService
+    @Inject lateinit var mScheduler: MyScheduler
+    @Inject lateinit var mNetService: NetService
     val mLoginEvent = SingleLiveEvent<Void>()
     val mLoading = MutableLiveData<Boolean>()
+
 
     fun login(userPhone: String, password: String){
         when {
@@ -32,7 +35,7 @@ class LoginViewModel @Inject constructor(netService: NetService): BaseViewModel(
                 val map = mapOf(Pair(PHONE,userPhone), Pair(PASSWORD,password))
                 mLoading.value = true
                 mNetService.login(map)
-                        .delay(1000,TimeUnit.MILLISECONDS,MyApplication.mScheduler)
+                        .delay(1000,TimeUnit.MILLISECONDS,mScheduler)
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
                         .subscribe({ u: User? ->

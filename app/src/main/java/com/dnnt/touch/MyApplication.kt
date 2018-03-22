@@ -6,12 +6,10 @@ import android.content.IntentFilter
 import com.dnnt.touch.been.User
 import com.dnnt.touch.di.DaggerAppComponent
 import com.dnnt.touch.receiver.NetworkReceiver
-import com.dnnt.touch.util.CrashHandler
-import com.dnnt.touch.util.MyScheduler
+import com.dnnt.touch.base.CrashHandler
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
-import io.reactivex.Scheduler
-import java.util.concurrent.ExecutorService
+import okhttp3.OkHttpClient
 import javax.inject.Inject
 
 /**
@@ -20,35 +18,32 @@ import javax.inject.Inject
 class MyApplication: DaggerApplication() {
 
     companion object {
-        lateinit var mExecutorService: ExecutorService private set
-        lateinit var mScheduler: Scheduler private set
+//        lateinit var mExecutorService: ExecutorService private set
+//        lateinit var mScheduler: Scheduler private set
+        lateinit var mOkHttpClient: OkHttpClient private set
         @SuppressLint("StaticFieldLeak")
         lateinit var mContext: Context private set
         var mUser: User? = null
     }
 
-    @Inject
-    fun setScheduler(scheduler: MyScheduler){
-        mScheduler = scheduler
-    }
-
-    @Inject
-    fun setContext(context: Context){
+    @Inject fun setContext(context: Context){
         mContext = context
     }
 
-    @Inject
-    fun setExecutorService(executorService: ExecutorService){
-        mExecutorService = executorService
-    }
+//    @Inject
+//    fun setExecutorService(executorService: ExecutorService){
+//        mExecutorService = executorService
+//    }
 
-    @Inject
-    fun initCrashHandler(crashHandler: CrashHandler){}
+    @Inject fun initCrashHandler(crashHandler: CrashHandler){}
 
-    @Inject
-    fun networkReceiverRigister(networkReceiver: NetworkReceiver){
+    @Inject fun networkReceiverRegister(networkReceiver: NetworkReceiver){
         val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         registerReceiver(networkReceiver, intentFilter)
+    }
+
+    @Inject fun setOkHttpClient(okHttpClient: OkHttpClient){
+        mOkHttpClient = okHttpClient
     }
 
     override fun applicationInjector(): AndroidInjector<out DaggerApplication> =

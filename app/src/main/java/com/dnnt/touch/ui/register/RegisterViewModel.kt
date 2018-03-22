@@ -2,12 +2,12 @@ package com.dnnt.touch.ui.register
 
 import android.arch.lifecycle.MutableLiveData
 import android.text.TextUtils
-import com.dnnt.touch.MyApplication
 import com.dnnt.touch.di.ActivityScoped
 import com.dnnt.touch.ui.base.BaseViewModel
-import com.dnnt.touch.util.SingleLiveEvent
+import com.dnnt.touch.base.SingleLiveEvent
 import javax.inject.Inject
 import com.dnnt.touch.R
+import com.dnnt.touch.base.MyScheduler
 import com.dnnt.touch.network.NetService
 import com.dnnt.touch.util.toast
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit
 @ActivityScoped
 class RegisterViewModel @Inject constructor(): BaseViewModel() {
 
-    @Inject
-    lateinit var netService: NetService
+    @Inject lateinit var mNetService: NetService
+    @Inject lateinit var mScheduler: MyScheduler
 
     val mVerificationEvent = SingleLiveEvent<Void>()
     val mNextStepEvent = SingleLiveEvent<Void>()
@@ -35,7 +35,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
             return
         }
 
-        netService.getVerificationCode(phone)
+        mNetService.getVerificationCode(phone)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({_: String? ->
                     toast(R.string.send_success)
@@ -52,8 +52,8 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
             else -> {
                 val map = mapOf(Pair(USER_NAME,userName), Pair(PASSWORD,password))
                 mLoading.value = true
-                netService.register(map)
-                        .delay(1000, TimeUnit.MILLISECONDS, MyApplication.mScheduler)
+                mNetService.register(map)
+                        .delay(1000, TimeUnit.MILLISECONDS, mScheduler)
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
                         .subscribe({
@@ -72,7 +72,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
             toast(R.string.wrong_verification_code)
             return
         }
-        netService.codeVerification(verificationCode)
+        mNetService.codeVerification(verificationCode)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ _: String? ->
                     mNextStepEvent.call()

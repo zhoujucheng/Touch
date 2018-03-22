@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.dnnt.touch.util;
+package com.dnnt.touch.base;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;

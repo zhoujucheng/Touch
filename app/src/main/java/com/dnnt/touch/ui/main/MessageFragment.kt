@@ -1,12 +1,7 @@
 package com.dnnt.touch.ui.main
 
 
-import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 
 import com.dnnt.touch.R
 import com.dnnt.touch.been.LatestChat
@@ -18,17 +13,22 @@ import javax.inject.Inject
 
 class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
 
+    private val mAdapter = LatestChatAdapter()
+
     override fun init() {
-        val list = mutableListOf(LatestChat("acd","aaaaaaa", Date(System.currentTimeMillis()), "love you"),
-                LatestChat("adf","ddddddd", Date(System.currentTimeMillis()), "hate you"))
-        recycler_view_message.layoutManager = LinearLayoutManager(this.context)
-        recycler_view_message.adapter = ChatAdapter(list)
+        val list = mutableListOf(LatestChat("http://120.79.250.237:8080/test/fig1.png","aaaaaaa", Date(System.currentTimeMillis()), "love you"),
+                LatestChat("http://120.79.250.237:8080/test/fig2.png","ddddddd", Date(System.currentTimeMillis()), "hate you"))
+        with(recycler_view_message){
+            layoutManager = LinearLayoutManager(this.context)
+            adapter = mAdapter
+        }
+
+        mAdapter.setList(list)
     }
 
     override fun getLayoutId() = R.layout.fragment_message
 
-    @Inject
-    override fun setViewModule(viewModel: MainViewModel) {
+    @Inject override fun setViewModule(viewModel: MainViewModel) {
         mViewModel = viewModel
     }
 

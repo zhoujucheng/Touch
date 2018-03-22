@@ -10,10 +10,8 @@ import javax.inject.Inject
 
 class ResetPwdActivity : BaseActivity<RegisterViewModel>() {
 
-    @Inject
-    lateinit var phoneFragmentProvider: Lazy<PhoneVerificationFragment>
-    @Inject
-    lateinit var newPwdFragmentProvider: Lazy<NewPwdFragment>
+    @Inject lateinit var phoneFragmentProvider: Lazy<PhoneVerificationFragment>
+    @Inject lateinit var newPwdFragmentProvider: Lazy<NewPwdFragment>
 
     override fun init() {
 
@@ -38,8 +36,7 @@ class ResetPwdActivity : BaseActivity<RegisterViewModel>() {
 
     override fun getLayoutId(): Int = R.layout.activity_reset_pwd
 
-    @Inject
-    override fun setViewModel(viewModel: RegisterViewModel) {
+    @Inject override fun setViewModel(viewModel: RegisterViewModel) {
         mViewModel = viewModel
     }
 

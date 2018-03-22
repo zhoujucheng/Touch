@@ -1,4 +1,4 @@
-package com.dnnt.touch.util
+package com.dnnt.touch.base
 
 import com.dnnt.touch.R
 

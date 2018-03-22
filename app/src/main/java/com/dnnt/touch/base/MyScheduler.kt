@@ -1,4 +1,4 @@
-package com.dnnt.touch.util
+package com.dnnt.touch.base
 
 import io.reactivex.Scheduler
 import io.reactivex.internal.schedulers.ExecutorScheduler

@@ -32,6 +32,7 @@ fun getProgressDialog(context: Context, title:String = "") =
         AlertDialog.Builder(context)
                 .setView(View.inflate(context,R.layout.loading_progress,null))
                 .setTitle(title)
+                .setCancelable(false)
                 .create()
 
 fun getDialog(context: Context, title: String = "", content: String = "") =

@@ -6,7 +6,8 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Bundle
-import com.dnnt.touch.util.VMProviderFactory
+import com.dnnt.touch.BR
+import com.dnnt.touch.base.VMProviderFactory
 import dagger.android.support.DaggerAppCompatActivity
 
 /**
@@ -31,8 +32,8 @@ abstract class BaseActivity<T: ViewModel> : DaggerAppCompatActivity() {
 
     private fun dataBinding(){
         val dataBinding: ViewDataBinding = DataBindingUtil.setContentView(this, getLayoutId())
-        val method = dataBinding.javaClass.getDeclaredMethod("setViewModel", mViewModel.javaClass)
-        method.invoke(dataBinding, mViewModel)
+        dataBinding.setVariable(BR.viewModel,mViewModel)
+        dataBinding.executePendingBindings()
     }
 
     fun startActivity(cls: Class<*>){

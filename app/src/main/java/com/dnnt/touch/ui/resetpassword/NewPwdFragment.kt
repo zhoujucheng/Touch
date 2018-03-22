@@ -19,8 +19,7 @@ class NewPwdFragment @Inject constructor() : BaseFragment<RegisterViewModel>() {
 
     override fun getLayoutId(): Int = R.layout.fragment_new_pwd
 
-    @Inject
-    override fun setViewModule(viewModel: RegisterViewModel) {
+    @Inject override fun setViewModule(viewModel: RegisterViewModel) {
         mViewModel = viewModel
     }
 

@@ -6,8 +6,9 @@ import com.dnnt.touch.MyApplication
 import com.dnnt.touch.network.NetService
 import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.util.BASE_URL
-import com.dnnt.touch.util.MyScheduler
-import com.dnnt.touch.util.NetworkNotAvailableException
+import com.dnnt.touch.base.MyScheduler
+import com.dnnt.touch.base.NetworkNotAvailableException
+import com.dnnt.touch.util.debugOnly
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import dagger.Module
@@ -37,24 +38,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(executorService: ExecutorService, scheduler: MyScheduler) : Retrofit{
-        val clientBuilder = OkHttpClient.Builder()
-                //网络判断拦截器
-                .addInterceptor{
-                    if (!NetworkReceiver.isNetUsable()){
-                        throw NetworkNotAvailableException()
-                    }
-//                    val request = it.request().newBuilder().addHeader().build()
-                    return@addInterceptor it.proceed(it.request())
-                }
-                .dispatcher(Dispatcher(executorService))
-
-        if (BuildConfig.DEBUG){
-            val loggingInterceptor = HttpLoggingInterceptor()
-            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-            clientBuilder.addNetworkInterceptor(loggingInterceptor)
-        }
-        val okHttpClient = clientBuilder.build()
+    fun provideRetrofit(okHttpClient: OkHttpClient, scheduler: MyScheduler) : Retrofit{
         val gson = GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create()
         return Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -62,6 +46,26 @@ class AppModule {
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(scheduler))
                 .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(executorService: ExecutorService): OkHttpClient{
+        val clientBuilder = OkHttpClient.Builder()
+                //网络判断拦截器
+                .addInterceptor{
+                    if (!NetworkReceiver.isNetUsable()){
+                        throw NetworkNotAvailableException()
+                    }
+                    return@addInterceptor it.proceed(it.request())
+                }
+                .dispatcher(Dispatcher(executorService))
+        debugOnly {
+            val loggingInterceptor = HttpLoggingInterceptor()
+            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            clientBuilder.addNetworkInterceptor(loggingInterceptor)
+        }
+        return clientBuilder.build()
     }
 
     @Provides

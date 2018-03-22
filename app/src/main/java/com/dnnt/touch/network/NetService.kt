@@ -31,4 +31,7 @@ interface NetService {
     @POST
     @FormUrlEncoded
     fun resetPassword(@Field("newPassword") newPassword: String): Observable<Response<Json<String>>>
+
+    @GET("user/test")
+    fun getTest(): Observable<String>
 }

@@ -23,7 +23,7 @@ class LoginViewModelTest {
 
     @Test
     fun login() {
-        mLoginVM.login("dnnt9981", "abcdefg")
+        mLoginVM.login("18255132583" , "abcdefg")
     }
 
 }

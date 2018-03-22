@@ -8,10 +8,8 @@ import dagger.Lazy
 
 class RegisterActivity : BaseActivity<RegisterViewModel>() {
 
-    @Inject
-    lateinit var phoneFragmentProvider: Lazy<PhoneVerificationFragment>
-    @Inject
-    lateinit var registerFragmentProvider: Lazy<RegisterFragment>
+    @Inject lateinit var phoneFragmentProvider: Lazy<PhoneVerificationFragment>
+    @Inject lateinit var registerFragmentProvider: Lazy<RegisterFragment>
 
     override fun init() {
 
@@ -35,8 +33,7 @@ class RegisterActivity : BaseActivity<RegisterViewModel>() {
 
     override fun getLayoutId(): Int = R.layout.activity_register
 
-    @Inject
-    override fun setViewModel(viewModel: RegisterViewModel) {
+    @Inject override fun setViewModel(viewModel: RegisterViewModel) {
         mViewModel = viewModel
     }
 

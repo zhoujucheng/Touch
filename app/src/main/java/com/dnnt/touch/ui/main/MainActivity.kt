@@ -19,12 +19,8 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
 
-    @Inject
-    lateinit var messageFragmentProvider: Lazy<MessageFragment>
-
-    @Inject
-    lateinit var contactFragmentProvider: Lazy<ContactFragment>
-
+    @Inject lateinit var messageFragmentProvider: Lazy<MessageFragment>
+    @Inject lateinit var contactFragmentProvider: Lazy<ContactFragment>
 
     override fun init() {
         setSupportActionBar(toolbar)
@@ -48,8 +44,7 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
 
     override fun getLayoutId() = R.layout.activity_main
 
-    @Inject
-    override fun setViewModel(viewModel: MainViewModel) {
+    @Inject override fun setViewModel(viewModel: MainViewModel) {
         mViewModel = viewModel
     }
 

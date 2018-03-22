@@ -1,4 +1,4 @@
-package com.dnnt.touch.util
+package com.dnnt.touch.base
 
 import android.app.AlertDialog
 import android.arch.lifecycle.Observer

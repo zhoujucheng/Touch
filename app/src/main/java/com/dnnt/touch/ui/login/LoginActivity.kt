@@ -6,7 +6,7 @@ import com.dnnt.touch.R
 import com.dnnt.touch.ui.main.MainActivity
 import com.dnnt.touch.ui.register.RegisterActivity
 import com.dnnt.touch.ui.resetpassword.ResetPwdActivity
-import com.dnnt.touch.util.DialogObserver
+import com.dnnt.touch.base.DialogObserver
 import com.dnnt.touch.util.getProgressDialog
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_login.*
@@ -40,8 +40,7 @@ class LoginActivity : BaseActivity<LoginViewModel>(){
 
     override fun getLayoutId(): Int = R.layout.activity_login
 
-    @Inject
-    override fun setViewModel(viewModel: LoginViewModel){
+    @Inject override fun setViewModel(viewModel: LoginViewModel){
         mViewModel = viewModel
     }
 

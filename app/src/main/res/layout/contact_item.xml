@@ -2,7 +2,7 @@
 <layout>
     <data>
         <variable
-            name="user"
+            name="item"
             type="com.dnnt.touch.been.User" />
     </data>
 
@@ -27,6 +27,7 @@
             android:id="@+id/head"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            app:url="@{item.headUrl}"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +41,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="@{user.nickname}"
+            android:text="@{item.nickname}"
             android:includeFontPadding="false"
             android:textSize="26sp"
             android:ellipsize="end"

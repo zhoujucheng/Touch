@@ -1,4 +1,4 @@
-package com.dnnt.touch.util
+package com.dnnt.touch.base
 
 import android.content.Context
 import android.os.Process
@@ -15,6 +15,7 @@ class CrashHandler @Inject constructor(context: Context): Thread.UncaughtExcepti
 
     private val mDefaultHandler: Thread.UncaughtExceptionHandler? = Thread.getDefaultUncaughtExceptionHandler()
     private val mContext = context
+
 
 
     init {

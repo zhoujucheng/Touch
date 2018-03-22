@@ -10,8 +10,7 @@ import dagger.android.support.DaggerFragment
 /**
  * Created by dnnt on 18-3-9.
  */
-class MainPagerAdapter(fm: FragmentManager, list: List<Lazy<out DaggerFragment>>) : FragmentPagerAdapter(fm) {
-    private val mList = list
+class MainPagerAdapter(fm: FragmentManager, private val mList: List<Lazy<out DaggerFragment>>) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment = mList[position].get()
 
