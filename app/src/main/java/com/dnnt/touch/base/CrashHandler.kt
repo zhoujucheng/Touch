@@ -9,6 +9,7 @@ import javax.inject.Singleton
 
 /**
  * Created by dnnt on 17-12-23.
+ * 程序异常处理
  */
 @Singleton
 class CrashHandler @Inject constructor(context: Context): Thread.UncaughtExceptionHandler{

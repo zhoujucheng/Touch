@@ -1,4 +1,4 @@
-package com.dnnt.touch.ui.main
+package com.dnnt.touch.ui.main.message
 
 
 import android.support.v7.widget.LinearLayoutManager
@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.dnnt.touch.R
 import com.dnnt.touch.been.LatestChat
 import com.dnnt.touch.ui.base.BaseFragment
+import com.dnnt.touch.ui.main.MainViewModel
 import kotlinx.android.synthetic.main.fragment_message.*
 import java.util.*
 import javax.inject.Inject

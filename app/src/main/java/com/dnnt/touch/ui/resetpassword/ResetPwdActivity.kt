@@ -19,6 +19,7 @@ class ResetPwdActivity : BaseActivity<RegisterViewModel>() {
                 .add(R.id.container,phoneFragmentProvider.get())
                 .commit()
 
+        //订阅验证码验证成功后的事件
         mViewModel.mNextStepEvent.observe(this, Observer {
             supportFragmentManager.beginTransaction()
                     .addToBackStack(null)
@@ -27,6 +28,7 @@ class ResetPwdActivity : BaseActivity<RegisterViewModel>() {
                     .commit()
         })
 
+        //订阅所注册完成后的事件
         mViewModel.mFinishEvent.observe(this,Observer {
             this.finish()
         })

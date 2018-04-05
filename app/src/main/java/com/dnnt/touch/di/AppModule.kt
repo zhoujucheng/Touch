@@ -60,6 +60,7 @@ class AppModule {
                     return@addInterceptor it.proceed(it.request())
                 }
                 .dispatcher(Dispatcher(executorService))
+        //在debug时，为okhttp设置日志拦截器
         debugOnly {
             val loggingInterceptor = HttpLoggingInterceptor()
             loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
@@ -70,5 +71,6 @@ class AppModule {
 
     @Provides
     fun provideNetService(retrofit: Retrofit): NetService = retrofit.create(NetService::class.java)
+
 
 }

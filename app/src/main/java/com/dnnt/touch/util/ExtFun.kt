@@ -15,16 +15,16 @@ import java.io.IOException
  * Created by dnnt on 18-1-26.
  */
 fun <T : Json<U>,U> Observable<Response<T>>.subscribe
-        (onSuccess: (U?) -> Unit, onFailure: (String) -> Unit, @NonNull onComplete: () -> Unit,
+        (onSuccess: (Response<T>) -> Unit, onFailure: (String,Int) -> Unit, @NonNull onComplete: () -> Unit,
          @NonNull onSubscribe: (Disposable) -> Unit ) =
         subscribe({
-                    if (it.isSuccessful) {
-                        val t = it.body()
-                        if (t != null){
-                            if (t.successful) {
-                                onSuccess(t.obj)
+                    if (it.isSuccessful) {//请求成功
+                        val json = it.body()
+                        if (json != null){
+                            if (json.successful) {//服务器操作成功
+                                onSuccess(it)
                             } else {
-                                onFailure(t.msg)
+                                onFailure(json.msg,json.code)
                             }
                         }else{
                             toast(R.string.server_error)
@@ -50,6 +50,6 @@ fun <T : Json<U>,U> Observable<Response<T>>.subscribe
                     it.printStackTrace()
                 }, onComplete, onSubscribe)!!
 
-fun <T : Json<U>,U> Observable<Response<T>>.subscribe(onSuccess: (U?) -> Unit, onFailure: (String) -> Unit) =
+fun <T : Json<U>,U> Observable<Response<T>>.subscribe(onSuccess: (Response<T>) -> Unit, onFailure: (String,Int) -> Unit) =
     subscribe(onSuccess, onFailure, {}, {})
 

@@ -1,20 +1,25 @@
 package com.dnnt.touch.ui.main
 
-import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.view.Menu
 import android.view.MenuItem
+import com.bumptech.glide.Glide
+import com.dnnt.touch.MyApplication
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import com.dnnt.touch.R
 import com.dnnt.touch.ui.base.BaseActivity
+import com.dnnt.touch.ui.main.contact.ContactFragment
+import com.dnnt.touch.ui.main.message.MessageFragment
+import com.dnnt.touch.util.BASE_URL
+import com.dnnt.touch.util.debugOnly
 import dagger.Lazy
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.nav_header_main.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 import javax.inject.Inject
 
 class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
@@ -40,6 +45,12 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         val fragmentList = listOf<Lazy<out DaggerFragment>>(messageFragmentProvider, contactFragmentProvider)
         val pagerAdapter = MainPagerAdapter(supportFragmentManager,fragmentList)
         view_pager.adapter = pagerAdapter
+
+        debugOnly {
+            launch(UI){
+                Glide.with(this@MainActivity).load(BASE_URL + MyApplication.mUser?.headUrl).into(user_head)
+            }
+        }
     }
 
     override fun getLayoutId() = R.layout.activity_main

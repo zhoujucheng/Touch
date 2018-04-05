@@ -17,11 +17,12 @@ import dagger.android.support.DaggerFragment
  * A base [Fragment] class.
  */
 abstract class BaseFragment<T: ViewModel> : DaggerFragment() {
-
+//    必须在子类中进行注入
     protected lateinit var mViewModel: T
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val dataBinding: ViewDataBinding = DataBindingUtil.inflate<ViewDataBinding>(inflater,getLayoutId(),container,false)
+        val dataBinding = DataBindingUtil.inflate<ViewDataBinding>(inflater,getLayoutId(),container,false)
+//        要求layout中类型为ViewModel子类的variable的name必须为viewModel
         dataBinding.setVariable(BR.viewModel,mViewModel)
         dataBinding.executePendingBindings()
         return dataBinding.root

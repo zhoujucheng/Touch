@@ -7,13 +7,18 @@
         <variable
             name="item"
             type="com.dnnt.touch.been.LatestChat" />
+
+        <variable
+            name="evenHandler"
+            type="com.dnnt.touch.ui.main.contact.ItemEvenHandler" />
     </data>
 
     <android.support.constraint.ConstraintLayout
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:onClick="@{(view) -> evenHandler.onItemClick(view,item)}">
 
         <View
             android:id="@+id/line"

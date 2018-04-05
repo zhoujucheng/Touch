@@ -10,6 +10,7 @@ import com.bumptech.glide.request.RequestOptions
 
 /**
  * Created by dnnt on 18-3-18.
+ * 属性绑定，
  */
 class ImageUrlBindings {
     companion object {
@@ -20,6 +21,7 @@ class ImageUrlBindings {
                 .load(url)
 //                .apply(RequestOptions.signatureOf())
                 .into(imageView)
+//            imageView.setImageURI()
         }
     }
 }

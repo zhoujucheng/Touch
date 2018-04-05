@@ -27,21 +27,21 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
     val mLoading = MutableLiveData<Boolean>()
 
 
-    fun login(userPhone: String, password: String){
+    fun login(nameOrPhone: String, password: String){
         when {
-            TextUtils.isEmpty(userPhone) -> toast(R.string.user_phone_empty)
+            TextUtils.isEmpty(nameOrPhone) -> toast(R.string.name_or_phone_empty)
             password.length < 6 -> toast(R.string.wrong_password)
             else -> {
-                val map = mapOf(Pair(PHONE,userPhone), Pair(PASSWORD,password))
+                val map = mapOf(Pair(NAME_OR_PHONE,nameOrPhone), Pair(PASSWORD,password))
                 mLoading.value = true
                 mNetService.login(map)
                         .delay(1000,TimeUnit.MILLISECONDS,mScheduler)
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
-                        .subscribe({ u: User? ->
-                            MyApplication.mUser = u
+                        .subscribe({
+                            MyApplication.mUser = it.body()!!.obj
                             mLoginEvent.call()
-                        }, {
+                        }, {_,_ ->
                             toast(R.string.login_fail)
                         })
             }

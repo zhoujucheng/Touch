@@ -1,7 +1,8 @@
 package com.dnnt.touch.ui.main
 
-import com.dnnt.touch.di.ActivityScoped
 import com.dnnt.touch.di.FragmentScoped
+import com.dnnt.touch.ui.main.contact.ContactFragment
+import com.dnnt.touch.ui.main.message.MessageFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

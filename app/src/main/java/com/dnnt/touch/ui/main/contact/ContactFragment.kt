@@ -1,4 +1,4 @@
-package com.dnnt.touch.ui.main
+package com.dnnt.touch.ui.main.contact
 
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.dnnt.touch.R
 import com.dnnt.touch.been.User
 import com.dnnt.touch.ui.base.BaseFragment
+import com.dnnt.touch.ui.main.MainViewModel
 import com.dnnt.touch.util.debugOnly
 import kotlinx.android.synthetic.main.fragment_contact.*
 import javax.inject.Inject

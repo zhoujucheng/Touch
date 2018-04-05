@@ -1,5 +1,6 @@
 package com.dnnt.touch.di
 
+import com.dnnt.touch.ui.chat.ChatActivity
 import com.dnnt.touch.ui.login.LoginActivity
 import com.dnnt.touch.ui.login.LoginModule
 import com.dnnt.touch.ui.main.MainActivity
@@ -31,4 +32,8 @@ abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = [MainModule::class])
     abstract fun mainActivity(): MainActivity
+
+    @ActivityScoped
+    @ContributesAndroidInjector()
+    abstract fun chatActivity(): ChatActivity
 }
