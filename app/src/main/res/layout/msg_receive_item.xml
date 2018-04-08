@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="item"
+            type="com.dnnt.touch.been.IMMsg" />
+
+        <variable
+            name="user"
+            type="com.dnnt.touch.been.User" />
+    </data>
+
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/head"
+            android:layout_width="@dimen/msg_item_head_width"
+            android:layout_height="@dimen/msg_item_head_width"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:url="@{user.headUrl}"/>
+
+        <TextView
+            android:id="@+id/nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/head"
+            app:layout_constraintTop_toTopOf="@+id/head"
+            app:layout_constraintBottom_toBottomOf="@+id/head"
+            android:layout_marginStart="8dp"
+            android:text="@{user.nickname == null ? user.userName : user.nickname}"/>
+
+        <TextView
+            android:id="@+id/chat_msg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/head"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/head"
+            android:layout_marginEnd="@dimen/chat_msg_margin"
+            android:text="@{item.msg}"/>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

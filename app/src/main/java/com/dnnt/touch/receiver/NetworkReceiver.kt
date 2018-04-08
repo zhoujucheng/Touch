@@ -9,6 +9,7 @@ import javax.inject.Singleton
 
 /**
  * Created by dnnt on 18-1-27.
+ * 网络变化监听器
  */
 @Singleton
 class NetworkReceiver @Inject constructor() : BroadcastReceiver() {

@@ -1,8 +1,10 @@
 syntax = "proto3";
 package com.dnnt.touch.protobuf;
 message ChatMsg{
-	int32 from=1;
-	int32 to=2;
+	int64 from=1;
+	int64 to=2;
 	int64 time=3;
 	string msg=4;
+	int32 type=5;
+	int32 seq=6;
 }

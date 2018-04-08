@@ -6,6 +6,7 @@ import android.widget.ImageView
 
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.dnnt.touch.util.BASE_URL
 
 
 /**
@@ -17,8 +18,12 @@ class ImageUrlBindings {
         @BindingAdapter("url")
         @JvmStatic
         fun setUrl(imageView: ImageView, url: String){
+            var realUrl = url
+            if(url.startsWith("/")){
+                realUrl = BASE_URL + url.substring(1)
+            }
             Glide.with(imageView)
-                .load(url)
+                .load(realUrl)
 //                .apply(RequestOptions.signatureOf())
                 .into(imageView)
 //            imageView.setImageURI()

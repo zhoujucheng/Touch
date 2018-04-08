@@ -6,36 +6,44 @@
         <variable
             name="viewModel"
             type="com.dnnt.touch.ui.chat.ChatViewModel" />
+        <variable
+            name="user"
+            type="com.dnnt.touch.been.User" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/edit_content"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/msg_send"
+            android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:textAllCaps="false"
+            android:text="@string/msg_send"/>
 
-        <android.support.v4.widget.NestedScrollView
+        <EditText
+            android:id="@+id/edit_msg"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            app:layout_constraintEnd_toStartOf="@+id/msg_send"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/msg_send"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycle_view_chat"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/edit_content"
+            app:layout_constraintBottom_toTopOf="@+id/edit_msg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="a\nb\nc\nd\ne\nf\ng\nh\ni\nj\nk\nl\nm\nn\no\np\nq\nr\ns\nt"
-                android:textSize="50sp"/>
-        </android.support.v4.widget.NestedScrollView>
+            app:layout_constraintTop_toTopOf="parent" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

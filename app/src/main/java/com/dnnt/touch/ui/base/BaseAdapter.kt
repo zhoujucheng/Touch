@@ -13,7 +13,7 @@ import com.dnnt.touch.ui.main.contact.ItemEvenHandler
  */
 abstract class BaseAdapter<T>(list: MutableList<T> = mutableListOf()) : RecyclerView.Adapter<BaseAdapter.BaseViewHolder<T>>() {
 
-    private var mList = list
+    var mList = list
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T> {
@@ -27,8 +27,8 @@ abstract class BaseAdapter<T>(list: MutableList<T> = mutableListOf()) : Recycler
         holder.bind(mList[position],getItemEvenHandler())
     }
 
-    class BaseViewHolder<T>(private val mBinding: ViewDataBinding) : RecyclerView.ViewHolder(mBinding.root){
-        fun bind(item: T, handler: ItemEvenHandler<T>){
+    open class BaseViewHolder<T>(private val mBinding: ViewDataBinding) : RecyclerView.ViewHolder(mBinding.root){
+        open fun bind(item: T, handler: ItemEvenHandler<T>){
 //            要求item layout中类型为T的variable的name必须为item
             mBinding.setVariable(BR.item,item)
             mBinding.setVariable(BR.evenHandler,handler)
@@ -44,5 +44,24 @@ abstract class BaseAdapter<T>(list: MutableList<T> = mutableListOf()) : Recycler
         mList = list ?: mutableListOf()
         notifyDataSetChanged()
     }
+
+    fun insertAtLast(list: MutableList<T>){
+        val start = mList.size
+        mList.addAll(list)
+//        mList.addAll()
+        notifyItemRangeInserted(start,list.size)
+    }
+
+    fun insertAtFirst(list: MutableList<T>){
+        mList.addAll(0,list)
+        notifyItemRangeInserted(0,list.size)
+    }
+
+    fun insertAtFirst(item: T){
+        mList.add(0,item)
+        notifyDataSetChanged()
+//        notifyItemInserted(0)
+    }
+
 
 }

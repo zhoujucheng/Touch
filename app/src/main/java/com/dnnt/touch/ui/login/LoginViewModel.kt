@@ -39,7 +39,9 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
                         .subscribe({
-                            MyApplication.mUser = it.body()!!.obj
+                            MyApplication.mUser = it.body()?.obj
+                            MyApplication.mUser?.nickname = MyApplication.mUser?.userName
+                            logi("Application User Login",MyApplication.mUser?.userName ?: "null")
                             mLoginEvent.call()
                         }, {_,_ ->
                             toast(R.string.login_fail)

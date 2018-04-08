@@ -7,6 +7,7 @@ import com.dnnt.touch.been.User
 import com.dnnt.touch.di.DaggerAppComponent
 import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.base.CrashHandler
+import com.raizlabs.android.dbflow.config.FlowManager
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 import okhttp3.OkHttpClient
@@ -24,6 +25,11 @@ class MyApplication: DaggerApplication() {
         @SuppressLint("StaticFieldLeak")
         lateinit var mContext: Context private set
         var mUser: User? = null
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        FlowManager.init(this)
     }
 
     @Inject fun setContext(context: Context){

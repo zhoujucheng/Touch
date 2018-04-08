@@ -16,12 +16,14 @@ import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
+import java.util.*
 
 
 class LoginActivity : BaseActivity<LoginViewModel>(){
 
     override fun init() {
 
+        //订阅登录成功事件
         mViewModel.mLoginEvent.observe(this, Observer<Void> {
             startActivity(MainActivity::class.java)
             finish()
@@ -45,9 +47,10 @@ class LoginActivity : BaseActivity<LoginViewModel>(){
         debugOnly {
             name_or_phone.setText("18255132583")
             password.setText("123456")
-            launch(UI) {
-                login.performClick()
-            }
+//            launch(UI) {
+//                login.performClick()
+//            }
+            logi("LoginActivity",Date(System.currentTimeMillis()).toString())
         }
     }
 
