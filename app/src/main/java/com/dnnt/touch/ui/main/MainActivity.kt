@@ -76,11 +76,11 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
             }
             launch(UI){
                 if (MyApplication.mUser != null){
+                    //TODO Have a better solutions?
                     while (user_head == null)   delay(100)
                     Glide.with(this@MainActivity).load(BASE_URL + MyApplication.mUser?.headUrl).into(user_head)
                 }
             }
-//            layoutInflater.set
         }
     }
 

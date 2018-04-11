@@ -1,8 +1,11 @@
 package com.dnnt.touch.netty
 
+import android.os.Handler
+import android.os.HandlerThread
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
+import com.dnnt.touch.been.User
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.util.*
 import io.netty.channel.ChannelDuplexHandler
@@ -15,12 +18,10 @@ import java.util.concurrent.TimeUnit
  */
 class MsgHandler : ChannelDuplexHandler(){
 
-
     companion object {
         const val TAG = "MsgHandler"
         lateinit var ctx: ChannelHandlerContext
         private val map = hashMapOf<Int,IMMsg>()
-        //TODO 有问题
         private var seq = 1 //消息序列
         fun sendMsg(msg: IMMsg){
             //TODO check network
@@ -117,6 +118,7 @@ class MsgHandler : ChannelDuplexHandler(){
                         TYPE_FRIEND_AGREE -> {
                             //将消息送到.ui.main.message.MessageFragment
                             val chatMsg = msg.toBuilder()
+                                .setFrom(temp.from)
                                 .setTo(temp.to)
                                 .setType(TYPE_ACK or TYPE_FRIEND_AGREE)
                                 .build()

@@ -37,18 +37,24 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
 //                }
 //            }
 //        }
+
+
         EventBus.getDefault().register(this)
         initData()
         initRecyclerView()
         setSendClickListener()
+
     }
 
     private fun initData(){
         val userId = intent.getLongExtra(CHAT_USER_ID,0)
-        user = (select from User::class where (User_Table.id.eq(userId))).querySingle() as User
+        val id = MyApplication.mUser?.id as Long
+        user = (select from User::class
+                where (User_Table.id.eq(id)).and(User_Table.friendId.eq(userId)))
+            .querySingle() as User
         mViewModel.chatUser = user
         mViewModel.mAdapter = ChatAdapter(user)
-        mViewModel.loadMore(user.id)
+        mViewModel.loadMore(user.friendId)
     }
 
     private fun initRecyclerView(){
@@ -69,7 +75,7 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
             if (txt == ""){
                 return@setOnClickListener
             }
-            val msg = IMMsg(0,MyApplication.mUser?.id as Long,user.id,Date(),txt, TYPE_MSG)
+            val msg = IMMsg(0,MyApplication.mUser?.id as Long,user.friendId,Date(),txt, TYPE_MSG)
             edit_msg.setText("")
             mViewModel.sendMsg(msg)
         }

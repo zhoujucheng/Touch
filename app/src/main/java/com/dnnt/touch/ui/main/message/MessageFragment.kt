@@ -2,6 +2,7 @@ package com.dnnt.touch.ui.main.message
 
 
 import android.support.v7.widget.LinearLayoutManager
+import com.dnnt.touch.MyApplication
 
 import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
@@ -38,20 +39,29 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
     private val mAdapter = LatestChatAdapter()
 
     override fun init() {
+        initUI()
+        EventBus.getDefault().register(this)
+    }
 
+    private fun initUI(){
         with(recycler_view_message){
             layoutManager = LinearLayoutManager(this.context)
             adapter = mAdapter
         }
-        EventBus.getDefault().register(this)
-        //TODO init ui
+        val id = MyApplication.mUser?.id as Long
+        val list = (select from LatestChat::class
+                where LatestChat_Table.to.eq(id)
+                orderBy LatestChat_Table.time.desc()).list
+        mAdapter.setList(list)
     }
+
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onChatIdChange(latestChat: LatestChat){
         //进入ChatActivity时，将chatId设置为对话用户的id
         //退出ChatActivity时,将chatId设置为NONE
-        chatId = latestChat.id
+        chatId = latestChat.from
         if (chatId == NONE){
             EventBus.getDefault().removeAllStickyEvents()
         }
@@ -73,27 +83,28 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
             }
             TYPE_ADD_FRIEND -> {
                 val pair = getNameAndUrl(chatMsg.msg)
-                val latestChat = LatestChat(chatMsg.from,pair.second,pair.first, Date(chatMsg.time),"", TYPE_ADD_FRIEND)
+                val latestChat = LatestChat(chatMsg.from,chatMsg.to,pair.second,pair.first, Date(chatMsg.time),"", TYPE_ADD_FRIEND)
                 latestChat.async().save()
                 mAdapter.insertAtFirst(latestChat)
             }
             TYPE_FRIEND_AGREE -> {
                 val pair = getNameAndUrl(chatMsg.msg)
-                val latestChat = LatestChat(chatMsg.from,pair.second,
+                val latestChat = LatestChat(chatMsg.from,chatMsg.to,pair.second,
                     pair.first,Date(chatMsg.time),"", TYPE_MSG)
                 latestChat.async().save()
                 updateList(latestChat)
                 updateUser(latestChat)
             }
             TYPE_OVERTIME -> {
-                //TODO something wrong
                 toast(R.string.add_friend_over_time,chatMsg.msg)
             }
             else -> {
                 when{
                     type and TYPE_ACK != 0 -> {
                         if (type and TYPE_FRIEND_AGREE != 0){
-                            val latestChat = (select from LatestChat::class where LatestChat_Table.id.eq(chatMsg.to)).querySingle()
+                            val latestChat = (select from LatestChat::class
+                                    where LatestChat_Table.to.eq(chatMsg.from).and(LatestChat_Table.from.eq(chatMsg.to)))
+                                .querySingle()
                             if (latestChat != null){
                                 latestChat.type = TYPE_MSG
                                 latestChat.async().update()
@@ -112,7 +123,9 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
     }
 
     private fun updateLatestChat(imMsg: IMMsg){
-        val latestChat = (select from LatestChat::class where LatestChat_Table.id.eq(imMsg.from)).querySingle()
+        val latestChat = (select from LatestChat::class
+                where LatestChat_Table.from.eq(imMsg.from).and(LatestChat_Table.to.eq(MyApplication.mUser?.id as Long)))
+            .querySingle()
         if (latestChat != null) {
             latestChat.latestMsg = imMsg.msg
             latestChat.time = imMsg.time
@@ -122,13 +135,12 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
     }
 
     private fun updateUser(latestChat: LatestChat){
-        val newUser = User(latestChat.id,latestChat.nickname,headUrl = latestChat.headUrl,nickname = latestChat.nickname)
-        newUser.save()
-        //TODO update ContactFragment ui
+        val newUser = User(latestChat.to,latestChat.from,latestChat.nickname,null,latestChat.headUrl,latestChat.nickname)
+        EventBus.getDefault().post(newUser)
     }
 
     private fun updateList(latestChat: LatestChat){
-        val k = mAdapter.mList.indexOfFirst { latestChat.id == it.id }
+        val k = mAdapter.mList.indexOfFirst { latestChat.from == it.from }
         if (k >= 0){
             mAdapter.mList.removeAt(k)
         }

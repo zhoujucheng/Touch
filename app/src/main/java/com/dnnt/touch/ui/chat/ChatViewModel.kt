@@ -39,14 +39,14 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
     }
 
     fun handleMsg(imMsg: IMMsg){
-        imMsg.async().save()
+        imMsg.save()
 //        LatestChat(chatUser.id,chatUser.headUrl,chatUser.userName, imMsg.time,imMsg.msg).save()
         offset++
         mAdapter.insertAtFirst(imMsg)
     }
 
     fun handleAck(imMsg: IMMsg){
-        imMsg.async().save()
+        imMsg.save()
 //        LatestChat(chatUser.id,chatUser.headUrl,chatUser.userName, imMsg.time,imMsg.msg).save()
         offset++
     }

@@ -52,11 +52,10 @@ class LatestChatAdapter : BaseAdapter<LatestChat>(){
         super.onBindViewHolder(holder, position)
         val item = mList[position]
         if (item.type == TYPE_ADD_FRIEND){
-            val id = MyApplication.mUser?.id as Long
             holder.mBinding.root.tv_agree.setOnClickListener {
                 val user = MyApplication.mUser as User
                 val msg = user.userName + SPLIT_CHAR + user.headUrl
-                MsgHandler.sendMsg(IMMsg(0,id,item.id,Date(),msg, TYPE_FRIEND_AGREE))
+                MsgHandler.sendMsg(IMMsg(0,item.to,item.from,Date(),msg, TYPE_FRIEND_AGREE))
             }
         }
 
@@ -69,7 +68,7 @@ class LatestChatAdapter : BaseAdapter<LatestChat>(){
                 if (item.type == TYPE_MSG){
                     EventBus.getDefault().post(item)
                     val intent = Intent(view.context,ChatActivity::class.java)
-                    intent.putExtra(CHAT_USER_ID,item.id)
+                    intent.putExtra(CHAT_USER_ID,item.from)
                     view.context.startActivity(intent)
                     //TODO update user table and ContactFragment ui
                 }
