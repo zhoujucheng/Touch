@@ -19,8 +19,8 @@ import com.dnnt.touch.ui.main.contact.ItemEvenHandler
 class ChatAdapter(var mUser: User) : BaseAdapter<IMMsg>() {
 
     companion object {
-        val TYPE_SEND = 1
-        val TYPE_RECEIVE = 2
+        const val TYPE_SEND = 1
+        const val TYPE_RECEIVE = 2
     }
 
 
@@ -59,7 +59,7 @@ class ChatAdapter(var mUser: User) : BaseAdapter<IMMsg>() {
 
     override fun getLayoutId(): Int = -1
 
-    class ChatViewHolder(private val mBinding: ViewDataBinding) : BaseViewHolder<IMMsg>(mBinding){
+    class ChatViewHolder(binding: ViewDataBinding) : BaseViewHolder<IMMsg>(binding){
         fun bind(item: IMMsg, user: User) {
             mBinding.setVariable(BR.item,item)
             mBinding.setVariable(BR.user,user)

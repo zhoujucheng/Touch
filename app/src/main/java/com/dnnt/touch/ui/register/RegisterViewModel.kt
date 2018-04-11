@@ -52,7 +52,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
 
     fun register(userName: String, password: String, password1: String,phone: String, code: String){
         when {
-            userName.length < 4 || userName.length > 16 -> toast(R.string.user_name_hint)
+            !isNameLegal(userName) -> toast(R.string.user_name_hint)
             password.length < 6 -> toast(R.string.password_least_six)
             password != password1 -> toast(R.string.password_not_equal)
             else -> {

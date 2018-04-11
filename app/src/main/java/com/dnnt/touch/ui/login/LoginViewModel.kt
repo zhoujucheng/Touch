@@ -29,7 +29,7 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
 
     fun login(nameOrPhone: String, password: String){
         when {
-            TextUtils.isEmpty(nameOrPhone) -> toast(R.string.name_or_phone_empty)
+            nameOrPhone.length < NAME_MIN_LENGTH || nameOrPhone.length > NAME_MAX_LENGTH -> toast(R.string.name_or_phone_wrong)
             password.length < 6 -> toast(R.string.wrong_password)
             else -> {
                 val map = mapOf(Pair(NAME_OR_PHONE,nameOrPhone), Pair(PASSWORD,password))
