@@ -29,8 +29,9 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
     fun loadMore(chatUserId: Long){
         val userId = MyApplication.mUser?.id as Long
         val list = (select from IMMsg::class
-                where ((IMMsg_Table.from.eq(userId)).and(IMMsg_Table.to.eq(chatUserId)))
-                        .or(IMMsg_Table.from.eq(chatUserId).and(IMMsg_Table.to.eq(userId)))
+                where IMMsg_Table.userId.eq(userId)
+//                ((IMMsg_Table.from.eq(userId)).and(IMMsg_Table.to.eq(chatUserId)))
+//                        .or(IMMsg_Table.from.eq(chatUserId).and(IMMsg_Table.to.eq(userId)))
                 limit limit
                 offset offset
                 orderBy (IMMsg_Table.time.desc())).list

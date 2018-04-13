@@ -1,8 +1,11 @@
 package com.dnnt.touch.base
 
 import android.content.Context
+import android.content.Intent
 import android.os.Process
 import com.dnnt.touch.MyApplication
+import com.dnnt.touch.netty.NettyService
+import com.dnnt.touch.util.loge
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,10 +28,13 @@ class CrashHandler @Inject constructor(context: Context): Thread.UncaughtExcepti
 
 
     override fun uncaughtException(t: Thread?, e: Throwable?) {
+//        mContext.stopService(Intent(mContext,NettyService::class.java))
+        loge("CrashHandler","uncaughtException")
         if (e != null){
             e.printStackTrace()
 //            TODO("handle crash")
         }
+        loge("",e?.message)
         mDefaultHandler?.uncaughtException(t,e) ?: Process.killProcess(Process.myPid())
     }
 

@@ -7,9 +7,12 @@ import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
 import com.dnnt.touch.been.User
 import com.dnnt.touch.protobuf.ChatProto
+import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.util.*
 import io.netty.channel.ChannelDuplexHandler
 import io.netty.channel.ChannelHandlerContext
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import java.util.concurrent.TimeUnit
 
@@ -26,6 +29,9 @@ class MsgHandler : ChannelDuplexHandler(){
         fun sendMsg(msg: IMMsg){
             //TODO check network
             val i = seq++
+            if (!NetworkReceiver.isNetUsable() || ctx.executor().isShutdown || ctx.executor().isTerminated){
+                return
+            }
             ctx.executor().submit{
                 msg.seq = i
                 val chatMsg = ChatProto.ChatMsg.newBuilder()
@@ -64,7 +70,9 @@ class MsgHandler : ChannelDuplexHandler(){
         }
 
         fun sendACK(from: Long,seq: Int, time: Long){
-            //TODO check network
+            if (!NetworkReceiver.isNetUsable() || ctx.executor().isShutdown || ctx.executor().isTerminated){
+                return
+            }
             ctx.executor().submit{
                 ctx.writeAndFlush(ChatProto.ChatMsg.newBuilder()
                     .setType(TYPE_ACK)
@@ -131,8 +139,16 @@ class MsgHandler : ChannelDuplexHandler(){
                 }
             }
             TYPE_USER_NOT_EXIST -> {
-                map.remove(msg.seq)
-                toast(R.string.user_not_exist)
+                val temp = map.remove(msg.seq)
+                logi(TAG,temp?.msg ?: "null")
+                launch(UI) {
+                    toast(R.string.user_not_exist,temp?.msg ?: "")
+                }
+            }
+            TYPE_USER_ALREADY_ADD -> {
+                val temp = map.remove(msg.seq)
+                launch(UI) {
+                    toast(R.string.friend_already_add,temp?.msg ?: "")                }
             }
         }
     }

@@ -25,6 +25,7 @@ class MyApplication: DaggerApplication() {
         @SuppressLint("StaticFieldLeak")
         lateinit var mContext: Context private set
         var mUser: User? = null
+        lateinit var mToken: String
     }
 
     override fun onCreate() {

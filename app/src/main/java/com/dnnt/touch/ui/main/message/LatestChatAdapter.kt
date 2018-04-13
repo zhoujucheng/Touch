@@ -70,7 +70,6 @@ class LatestChatAdapter : BaseAdapter<LatestChat>(){
                     val intent = Intent(view.context,ChatActivity::class.java)
                     intent.putExtra(CHAT_USER_ID,item.from)
                     view.context.startActivity(intent)
-                    //TODO update user table and ContactFragment ui
                 }
             }
 

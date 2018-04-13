@@ -1,5 +1,6 @@
 package com.dnnt.touch.ui.main
 
+import android.app.Application
 import android.content.Intent
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
@@ -17,9 +18,11 @@ import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
 import com.dnnt.touch.been.LatestChat
 import com.dnnt.touch.been.User
+import com.dnnt.touch.been.User_Table
 import com.dnnt.touch.netty.MsgHandler
 import com.dnnt.touch.netty.NettyService
 import com.dnnt.touch.protobuf.ChatProto
+import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.ui.base.BaseActivity
 import com.dnnt.touch.ui.main.contact.ContactFragment
 import com.dnnt.touch.ui.main.message.MessageFragment
@@ -47,6 +50,7 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
 
     @Inject lateinit var messageFragmentProvider: Lazy<MessageFragment>
     @Inject lateinit var contactFragmentProvider: Lazy<ContactFragment>
+    @Inject lateinit var networkReceiver: NetworkReceiver
 
     override fun init() {
         setSupportActionBar(toolbar)
@@ -62,23 +66,30 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         val pagerAdapter = MainPagerAdapter(supportFragmentManager,fragmentList)
         view_pager.adapter = pagerAdapter
 
+
+
         startService(Intent(this,NettyService::class.java))
 
+//        launch {
+//            delay(3000)
+//            stopService(Intent(MyApplication.mContext,NettyService::class.java))
+//        }
         debugOnly {
-            (select from IMMsg::class).list.forEach {
-                it.delete()
-            }
-            (select from LatestChat::class).list.forEach {
-                it.delete()
-            }
-            (select from User::class).list.forEach {
-                it.delete()
-            }
+//            (select from IMMsg::class).list.forEach {
+//                it.delete()
+//            }
+//            (select from LatestChat::class).list.forEach {
+//                it.delete()
+//            }
+//            (select from User::class).list.forEach {
+//                it.delete()
+//            }
             launch(UI){
                 if (MyApplication.mUser != null){
                     //TODO Have a better solutions?
                     while (user_head == null)   delay(100)
                     Glide.with(this@MainActivity).load(BASE_URL + MyApplication.mUser?.headUrl).into(user_head)
+                    user_name.text = MyApplication.mUser?.userName ?: ""
                 }
             }
         }
@@ -98,6 +109,11 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         }
     }
 
+    override fun onDestroy() {
+        stopService(Intent(this,NettyService::class.java))
+        super.onDestroy()
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
@@ -110,17 +126,14 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
                 with(view){
                     btn_add_friend.setOnClickListener {
                         val nameOrPhone = name_or_phone.text.toString()
-                        val user = MyApplication.mUser as User
-                        val id = user.id
-                        if(nameOrPhone == user.userName || nameOrPhone.equals(user.phone)){
-                            toast(R.string.can_not_add_yourself)
-                            return@setOnClickListener
-                        }
                         when {
-                            isNameLegal(nameOrPhone) -> {
-                                MsgHandler.sendMsg(IMMsg(from = id,msg = nameOrPhone,type = TYPE_ADD_FRIEND))
-                            }
-                            nameOrPhone.matches(Regex("\\d{11}")) -> {
+                            isNameLegal(nameOrPhone) || nameOrPhone.matches(Regex("\\d{11}")) -> {
+                                val user = MyApplication.mUser as User
+                                val id = user.id
+                                if(nameOrPhone == user.userName || nameOrPhone == user.phone){
+                                    toast(R.string.can_not_add_yourself)
+                                    return@setOnClickListener
+                                }
                                 MsgHandler.sendMsg(IMMsg(from = id,msg = nameOrPhone,type = TYPE_ADD_FRIEND))
                             }
                             else -> toast(R.string.user_not_exist)

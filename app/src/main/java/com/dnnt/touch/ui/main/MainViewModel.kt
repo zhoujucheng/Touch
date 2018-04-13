@@ -13,14 +13,4 @@ import javax.inject.Inject
  * Created by dnnt on 18-2-3.
  */
 @ActivityScoped
-class MainViewModel @Inject constructor(): BaseViewModel() {
-//    fun handleMsgEvent(chatMsg: ChatProto.ChatMsg){
-//        val imMsg = IMMsg.copyFromChatMsg(chatMsg)
-//        debugOnly {
-//            if (imMsg.from == chatId){
-//                EventBus.getDefault().post(imMsg)
-//            }
-//            imMsg.async().save()
-//            //TODO update ui
-//    }
-}
+class MainViewModel @Inject constructor(): BaseViewModel()

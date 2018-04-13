@@ -7,6 +7,7 @@ import android.os.IBinder
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.util.IP
 import com.dnnt.touch.util.logi
+import com.raizlabs.android.dbflow.kotlinextensions.async
 import io.netty.bootstrap.Bootstrap
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.ChannelOption
@@ -27,6 +28,7 @@ class NettyService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Thread{
+            logi(TAG,"start netty service")
             startNetty()
         }.start()
         return super.onStartCommand(intent, flags, startId)
@@ -36,7 +38,6 @@ class NettyService : Service() {
         val group = NioEventLoopGroup()
         val bootstrap = Bootstrap()
         try {
-            logi(TAG,"start")
             bootstrap.group(group).channel(NioSocketChannel::class.java)
                 .option(ChannelOption.TCP_NODELAY,true)
                 .handler(object : ChannelInitializer<SocketChannel>(){
@@ -44,7 +45,6 @@ class NettyService : Service() {
                         val pl = ch.pipeline()
                         pl.addLast(ProtobufVarint32FrameDecoder())
                         pl.addLast(ProtobufDecoder(ChatProto.ChatMsg.getDefaultInstance()))
-//                        pl.addLast(IdleStateHandler())
                         pl.addLast(ProtobufVarint32LengthFieldPrepender())
                         pl.addLast(ProtobufEncoder())
                         pl.addLast(MsgHandler())
@@ -55,6 +55,7 @@ class NettyService : Service() {
             cf.channel().closeFuture().sync()
         }finally {
             group.shutdownGracefully()
+            logi(TAG,"shutdown netty thread")
         }
 
     }
@@ -63,7 +64,23 @@ class NettyService : Service() {
         return mBinder
     }
 
-    class NettyBinder : Binder(){
+    override fun stopService(name: Intent?): Boolean {
+        logi(TAG,"stopService")
+        MsgHandler.ctx.close()
+        return super.stopService(name)
+    }
 
+    override fun onDestroy() {
+        logi(TAG,"onDestroy")
+//        if (MsgHandler.ctx.)
+        super.onDestroy()
+        val ctx = MsgHandler.ctx
+        if (ctx.executor().isTerminated || ctx.executor().isShutdown){
+            return
+        }
+        MsgHandler.ctx.close()
+    }
+
+    class NettyBinder : Binder(){
     }
 }

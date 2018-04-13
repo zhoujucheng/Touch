@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import com.dnnt.touch.MyApplication
+import com.dnnt.touch.netty.NettyService
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,12 +34,18 @@ class NetworkReceiver @Inject constructor() : BroadcastReceiver() {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         netStatus = if (networkInfo != null && networkInfo.isConnected){
+            if (MyApplication.mUser != null){
+                context.startService(Intent(context,NettyService::class.java))
+            }
             if (networkInfo.type == ConnectivityManager.TYPE_WIFI){
                 WIFI
             }else{
                 MOBILE_DATA
             }
         }else{
+            if (MyApplication.mUser != null){
+                context.stopService(Intent(context,NettyService::class.java))
+            }
             NO_NETWORK
         }
 

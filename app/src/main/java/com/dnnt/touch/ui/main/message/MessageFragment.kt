@@ -71,55 +71,64 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
     fun onMsgEvent(chatMsg: ChatProto.ChatMsg){
         val type = chatMsg.type
         when(type){
-            TYPE_MSG -> {
-                val imMsg = IMMsg.copyFromChatMsg(chatMsg)
-                if (imMsg.from == chatId){
-                    //将消息送到.ui.chat.ChatActivity
-                    EventBus.getDefault().postSticky(imMsg)
-                }else{
-                    imMsg.async().save()
-                }
-                updateLatestChat(imMsg)
-            }
-            TYPE_ADD_FRIEND -> {
-                val pair = getNameAndUrl(chatMsg.msg)
-                val latestChat = LatestChat(chatMsg.from,chatMsg.to,pair.second,pair.first, Date(chatMsg.time),"", TYPE_ADD_FRIEND)
-                latestChat.async().save()
-                mAdapter.insertAtFirst(latestChat)
-            }
-            TYPE_FRIEND_AGREE -> {
-                val pair = getNameAndUrl(chatMsg.msg)
-                val latestChat = LatestChat(chatMsg.from,chatMsg.to,pair.second,
-                    pair.first,Date(chatMsg.time),"", TYPE_MSG)
-                latestChat.async().save()
-                updateList(latestChat)
-                updateUser(latestChat)
-            }
-            TYPE_OVERTIME -> {
-                toast(R.string.add_friend_over_time,chatMsg.msg)
-            }
+            TYPE_MSG -> handleMsg(chatMsg)
+            TYPE_ADD_FRIEND -> handleAddFriend(chatMsg)
+            TYPE_FRIEND_AGREE -> handleFriendAgree(chatMsg)
+            TYPE_OVERTIME -> toast(R.string.add_friend_over_time,chatMsg.msg)
             else -> {
-                when{
-                    type and TYPE_ACK != 0 -> {
-                        if (type and TYPE_FRIEND_AGREE != 0){
-                            val latestChat = (select from LatestChat::class
-                                    where LatestChat_Table.to.eq(chatMsg.from).and(LatestChat_Table.from.eq(chatMsg.to)))
-                                .querySingle()
-                            if (latestChat != null){
-                                latestChat.type = TYPE_MSG
-                                latestChat.async().update()
-                                updateList(latestChat)
-                                updateUser(latestChat)
-                            }
-                        }else if(type and TYPE_MSG != 0){
-                            val imMsg = IMMsg.copyFromChatMsg(chatMsg)
-                            imMsg.from = imMsg.to // 注意此处
-                            updateLatestChat(imMsg)
-                        }
-                    }
+                if (type and TYPE_ACK != 0){
+                    handleAck(type xor TYPE_ACK,chatMsg)
                 }
             }
         }
+    }
+
+    private fun handleAck(type: Int,chatMsg: ChatProto.ChatMsg){
+        when(type){
+            TYPE_FRIEND_AGREE -> {
+                val latestChat = (select from LatestChat::class
+                        where LatestChat_Table.to.eq(chatMsg.from).and(LatestChat_Table.from.eq(chatMsg.to)))
+                    .querySingle()
+                if (latestChat != null){
+                    latestChat.type = TYPE_MSG
+                    latestChat.async().update()
+                    updateList(latestChat)
+                    updateUser(latestChat)
+                }
+            }
+            TYPE_MSG -> {
+                val imMsg = IMMsg.copyFromChatMsg(chatMsg)
+                imMsg.from = imMsg.to // 注意此处
+                updateLatestChat(imMsg)
+            }
+        }
+    }
+
+    private fun handleFriendAgree(chatMsg: ChatProto.ChatMsg){
+        val pair = getNameAndUrl(chatMsg.msg)
+        val latestChat = LatestChat(chatMsg.from,chatMsg.to,pair.second,
+            pair.first,Date(chatMsg.time),"", TYPE_MSG)
+        latestChat.async().save()
+        updateList(latestChat)
+        updateUser(latestChat)
+    }
+
+    private fun handleAddFriend(chatMsg: ChatProto.ChatMsg){
+        val pair = getNameAndUrl(chatMsg.msg)
+        val latestChat = LatestChat(chatMsg.from,chatMsg.to,pair.second,pair.first, Date(chatMsg.time),"", TYPE_ADD_FRIEND)
+        latestChat.async().save()
+        mAdapter.insertAtFirst(latestChat)
+    }
+
+    private fun handleMsg(chatMsg: ChatProto.ChatMsg){
+        val imMsg = IMMsg.copyFromChatMsg(chatMsg)
+        if (imMsg.from == chatId){
+            //将消息送到.ui.chat.ChatActivity
+            EventBus.getDefault().postSticky(imMsg)
+        }else{
+            imMsg.async().save()
+        }
+        updateLatestChat(imMsg)
     }
 
     private fun updateLatestChat(imMsg: IMMsg){
@@ -136,6 +145,7 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
 
     private fun updateUser(latestChat: LatestChat){
         val newUser = User(latestChat.to,latestChat.from,latestChat.nickname,null,latestChat.headUrl,latestChat.nickname)
+        //将消息送到.ui.main.ContactFragment
         EventBus.getDefault().post(newUser)
     }
 

@@ -42,6 +42,7 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
                             MyApplication.mUser = it.body()?.obj
                             MyApplication.mUser?.nickname = MyApplication.mUser?.userName
                             logi("Application User Login",MyApplication.mUser?.userName ?: "null")
+                            MyApplication.mToken = it.body()?.msg ?: ""
                             mLoginEvent.call()
                         }, {_,_ ->
                             toast(R.string.login_fail)

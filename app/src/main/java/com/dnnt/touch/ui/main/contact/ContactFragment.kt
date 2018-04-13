@@ -2,16 +2,16 @@ package com.dnnt.touch.ui.main.contact
 
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import com.dnnt.touch.MyApplication
 
 import com.dnnt.touch.R
 import com.dnnt.touch.been.User
+import com.dnnt.touch.been.User_Table
 import com.dnnt.touch.ui.base.BaseFragment
 import com.dnnt.touch.ui.main.MainViewModel
+import com.dnnt.touch.util.USER_NAME
 import com.dnnt.touch.util.debugOnly
-import com.raizlabs.android.dbflow.kotlinextensions.async
-import com.raizlabs.android.dbflow.kotlinextensions.from
-import com.raizlabs.android.dbflow.kotlinextensions.list
-import com.raizlabs.android.dbflow.kotlinextensions.select
+import com.raizlabs.android.dbflow.kotlinextensions.*
 import kotlinx.android.synthetic.main.fragment_contact.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -32,7 +32,8 @@ class ContactFragment @Inject constructor(): BaseFragment<MainViewModel>() {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
         }
-        val list = (select from User::class).list
+        val id = MyApplication.mUser?.id as Long
+        val list = (select from User::class where User_Table.id.eq(id)).list
         mAdapter.setList(list)
         EventBus.getDefault().register(this)
     }

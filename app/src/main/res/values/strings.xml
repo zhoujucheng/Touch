@@ -59,9 +59,10 @@
     <string name="msg_send">发送</string>
 
     <string name="add_friend">添加好友</string>
-    <string name="user_not_exist">不存在该用户</string>
+    <string name="user_not_exist">不存在该用户(%1$s)</string>
     <string name="friend_apply">该用户申请添加您为好友</string>
     <string name="agree">同意</string>
     <string name="can_not_add_yourself">无法添加自己为好友</string>
     <string name="add_friend_over_time">好友(%1$s)申请失败</string>
+    <string name="friend_already_add">你已添加该用户(%1$s)为好友</string>
 </resources>

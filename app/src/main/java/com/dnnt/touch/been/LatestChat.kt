@@ -5,6 +5,7 @@ import com.dnnt.touch.ui.main.message.MessageFragment
 import com.raizlabs.android.dbflow.annotation.Column
 import com.raizlabs.android.dbflow.annotation.PrimaryKey
 import com.raizlabs.android.dbflow.annotation.Table
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**

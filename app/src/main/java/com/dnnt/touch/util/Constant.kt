@@ -7,9 +7,8 @@ import javax.inject.Inject
 /**
  * Created by dnnt on 18-1-26.
  */
-
-//const val BASE_URL = "http://120.79.250.237:8080/touch/"
 const val IP = "192.168.186.226"
+//const val IP = "120.79.250.237"
 const val PORT = "8080"
 const val BASE_URL = "http://$IP:$PORT/touch/"
 const val USER = "user"
@@ -28,7 +27,8 @@ const val TYPE_ACK = 4
 const val TYPE_ADD_FRIEND = 8
 const val TYPE_FRIEND_AGREE = 0x10
 const val TYPE_USER_NOT_EXIST = 0x20
-const val TYPE_OVERTIME = 0x40
+const val TYPE_USER_ALREADY_ADD = 0x40
+const val TYPE_OVERTIME = 0x80
 
 const val NAME_MIN_LENGTH = 4
 const val NAME_MAX_LENGTH = 16
