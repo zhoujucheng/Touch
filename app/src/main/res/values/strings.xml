@@ -65,4 +65,8 @@
     <string name="can_not_add_yourself">无法添加自己为好友</string>
     <string name="add_friend_over_time">好友(%1$s)申请失败</string>
     <string name="friend_already_add">你已添加该用户(%1$s)为好友</string>
+
+    <string name="delete">删除</string>
+
+    <string name="quit">退出</string>
 </resources>

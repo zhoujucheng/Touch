@@ -39,7 +39,9 @@
 
     <item
         android:id="@+id/add_friend"
-        android:icon="@drawable/ic_menu_slideshow"
         android:title="@string/add_friend" />
+
+    <item android:id="@+id/quit"
+        android:title="@string/quit" />
 
 </menu>

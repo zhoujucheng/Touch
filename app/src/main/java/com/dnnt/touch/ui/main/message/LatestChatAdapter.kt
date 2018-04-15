@@ -4,6 +4,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.os.Handler
+import android.support.v7.widget.PopupMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,8 @@ import com.dnnt.touch.ui.base.BaseAdapter
 import com.dnnt.touch.ui.chat.ChatActivity
 import com.dnnt.touch.ui.main.contact.ItemEvenHandler
 import com.dnnt.touch.util.*
+import com.raizlabs.android.dbflow.kotlinextensions.async
+import com.raizlabs.android.dbflow.kotlinextensions.delete
 import kotlinx.android.synthetic.main.add_friend_item.view.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
@@ -61,6 +64,14 @@ class LatestChatAdapter : BaseAdapter<LatestChat>(){
 
     }
 
+    fun removeItem(item: LatestChat){
+        val k = mList.indexOfFirst { it.from == it.from }
+        if (k >= 0){
+            mList.removeAt(k)
+        }
+        notifyDataSetChanged()
+    }
+
     override fun getItemEvenHandler(): ItemEvenHandler<LatestChat> {
         return object : ItemEvenHandler<LatestChat> {
             override fun onItemClick(view: View, item: LatestChat) {
@@ -73,9 +84,25 @@ class LatestChatAdapter : BaseAdapter<LatestChat>(){
                 }
             }
 
+            override fun onLongClick(view: View, item: LatestChat): Boolean {
+                val popupMenu = PopupMenu(view.context,view)
+                popupMenu.inflate(R.menu.latest_chat_menu)
+                popupMenu.show()
+                popupMenu.setOnMenuItemClickListener {
+                    when(it.itemId){
+                        R.id.delete -> {
+                            item.async().delete()
+                            removeItem(item)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                return true
+            }
+
         }
     }
 
     override fun getLayoutId() = R.layout.latest_chat_item
-
 }

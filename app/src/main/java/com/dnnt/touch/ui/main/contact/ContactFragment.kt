@@ -1,5 +1,6 @@
 package com.dnnt.touch.ui.main.contact
 
+import android.arch.lifecycle.Observer
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import com.dnnt.touch.MyApplication
@@ -13,9 +14,11 @@ import com.dnnt.touch.util.USER_NAME
 import com.dnnt.touch.util.debugOnly
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import kotlinx.android.synthetic.main.fragment_contact.*
+import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.jetbrains.anko.coroutines.experimental.asReference
 import javax.inject.Inject
 import kotlin.coroutines.experimental.buildSequence
 
@@ -35,6 +38,12 @@ class ContactFragment @Inject constructor(): BaseFragment<MainViewModel>() {
         val id = MyApplication.mUser?.id as Long
         val list = (select from User::class where User_Table.id.eq(id)).list
         mAdapter.setList(list)
+        if (list.size == 0){
+            mViewModel.loadUsers.observe(this, Observer {
+                mAdapter.setList(it?.toMutableList())
+            })
+            mViewModel.freshFriends(MyApplication.mToken)
+        }
         EventBus.getDefault().register(this)
     }
 

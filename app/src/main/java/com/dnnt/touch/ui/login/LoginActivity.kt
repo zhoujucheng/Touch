@@ -7,10 +7,7 @@ import com.dnnt.touch.ui.main.MainActivity
 import com.dnnt.touch.ui.register.RegisterActivity
 import com.dnnt.touch.ui.resetpassword.ResetPwdActivity
 import com.dnnt.touch.base.DialogObserver
-import com.dnnt.touch.util.debugOnly
-import com.dnnt.touch.util.getProgressDialog
-import com.dnnt.touch.util.loge
-import com.dnnt.touch.util.logi
+import com.dnnt.touch.util.*
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.experimental.android.UI
@@ -51,6 +48,12 @@ class LoginActivity : BaseActivity<LoginViewModel>(){
 //                login.performClick()
 //            }
             logi("LoginActivity",Date(System.currentTimeMillis()).toString())
+        }
+
+        val nameOrPhone = getString(NAME_OR_PHONE)
+        if (!nameOrPhone.isEmpty()){
+            name_or_phone.setText(nameOrPhone)
+            password.setText(getString(PASSWORD))
         }
     }
 

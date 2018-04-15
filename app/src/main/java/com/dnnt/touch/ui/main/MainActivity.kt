@@ -24,6 +24,7 @@ import com.dnnt.touch.netty.NettyService
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.ui.base.BaseActivity
+import com.dnnt.touch.ui.login.LoginActivity
 import com.dnnt.touch.ui.main.contact.ContactFragment
 import com.dnnt.touch.ui.main.message.MessageFragment
 import com.dnnt.touch.util.*
@@ -117,51 +118,38 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.add_friend -> {
-                val view = View.inflate(this,R.layout.dialog_add_friend,null)
-                AlertDialog.Builder(this)
-                    .setView(view)
-                    .create()
-                    .show()
-                with(view){
-                    btn_add_friend.setOnClickListener {
-                        val nameOrPhone = name_or_phone.text.toString()
-                        when {
-                            isNameLegal(nameOrPhone) || nameOrPhone.matches(Regex("\\d{11}")) -> {
-                                val user = MyApplication.mUser as User
-                                val id = user.id
-                                if(nameOrPhone == user.userName || nameOrPhone == user.phone){
-                                    toast(R.string.can_not_add_yourself)
-                                    return@setOnClickListener
-                                }
-                                MsgHandler.sendMsg(IMMsg(from = id,msg = nameOrPhone,type = TYPE_ADD_FRIEND))
-                            }
-                            else -> toast(R.string.user_not_exist)
-                        }
-                    }
-                }
+            R.id.add_friend -> handleAddFriend()
+            R.id.quit -> {
+                startActivity(Intent(this,LoginActivity::class.java))
+                this.finish()
             }
-
-//            R.id.nav_camera -> {
-//                // Handle the camera action
-//            }
-//            R.id.nav_gallery -> {
-//
-//            }
-//            R.id.nav_slideshow -> {
-//
-//            }
-//            R.id.nav_manage -> {
-//
-//            }
-//            R.id.nav_share -> {
-//
-//            }
-//            R.id.nav_send -> {
-//
-//            }
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun handleAddFriend(){
+        val view = View.inflate(this,R.layout.dialog_add_friend,null)
+        AlertDialog.Builder(this)
+            .setView(view)
+            .create()
+            .show()
+        with(view){
+            btn_add_friend.setOnClickListener {
+                val nameOrPhone = name_or_phone.text.toString()
+                when {
+                    isNameLegal(nameOrPhone) || nameOrPhone.matches(Regex("\\d{11}")) -> {
+                        val user = MyApplication.mUser as User
+                        val id = user.id
+                        if(nameOrPhone == user.userName || nameOrPhone == user.phone){
+                            toast(R.string.can_not_add_yourself)
+                            return@setOnClickListener
+                        }
+                        MsgHandler.sendMsg(IMMsg(from = id,msg = nameOrPhone,type = TYPE_ADD_FRIEND))
+                    }
+                    else -> toast(R.string.user_not_exist)
+                }
+            }
+        }
     }
 }

@@ -9,6 +9,7 @@ import com.dnnt.touch.util.IP
 import com.dnnt.touch.util.logi
 import com.raizlabs.android.dbflow.kotlinextensions.async
 import io.netty.bootstrap.Bootstrap
+import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.ChannelOption
 import io.netty.channel.nio.NioEventLoopGroup
@@ -18,6 +19,7 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder
 import io.netty.handler.codec.protobuf.ProtobufEncoder
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender
+import io.netty.handler.timeout.IdleStateHandler
 import java.net.InetSocketAddress
 
 class NettyService : Service() {
@@ -26,10 +28,16 @@ class NettyService : Service() {
     }
     private val mBinder = NettyBinder()
 
+    @Volatile
+    private var running = true
+
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Thread{
-            logi(TAG,"start netty service")
-            startNetty()
+       Thread{
+            while (running){
+                logi(TAG,"start netty service")
+                startNetty()
+            }
         }.start()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -43,10 +51,12 @@ class NettyService : Service() {
                 .handler(object : ChannelInitializer<SocketChannel>(){
                     override fun initChannel(ch: SocketChannel) {
                         val pl = ch.pipeline()
+//                        pl.addLast(IdleStateHandler(0,0,11))
                         pl.addLast(ProtobufVarint32FrameDecoder())
                         pl.addLast(ProtobufDecoder(ChatProto.ChatMsg.getDefaultInstance()))
                         pl.addLast(ProtobufVarint32LengthFieldPrepender())
                         pl.addLast(ProtobufEncoder())
+                        pl.addLast(IdleStateHandler(0,5,0))
                         pl.addLast(MsgHandler())
                     }
 
@@ -57,7 +67,6 @@ class NettyService : Service() {
             group.shutdownGracefully()
             logi(TAG,"shutdown netty thread")
         }
-
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -66,19 +75,24 @@ class NettyService : Service() {
 
     override fun stopService(name: Intent?): Boolean {
         logi(TAG,"stopService")
-        MsgHandler.ctx.close()
+        terminate()
         return super.stopService(name)
     }
 
     override fun onDestroy() {
         logi(TAG,"onDestroy")
-//        if (MsgHandler.ctx.)
         super.onDestroy()
+        terminate()
+    }
+
+    private fun terminate(){
+        running = false
         val ctx = MsgHandler.ctx
         if (ctx.executor().isTerminated || ctx.executor().isShutdown){
             return
         }
         MsgHandler.ctx.close()
+//        thread.state = Thread.State.
     }
 
     class NettyBinder : Binder(){

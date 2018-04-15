@@ -29,6 +29,10 @@ interface NetService {
     @FormUrlEncoded
     fun register(@FieldMap map: Map<String, String>,@Header(COOKIE) cookie: String): Observable<Response<Json<Unit>>>
 
+    @POST("user/getFriends")
+    @FormUrlEncoded
+    fun getFriends(@Field("token") token: String): Observable<Response<Json<List<User>>>>
+
     @POST
     @FormUrlEncoded
     fun resetPassword(@Field("newPassword") newPassword: String): Observable<Response<Json<String>>>

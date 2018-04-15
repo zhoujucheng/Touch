@@ -20,7 +20,10 @@ const val NAME_OR_PHONE = "nameOrPhone"
 const val PASSWORD = "password"
 const val VERIFICATION_CODE = "verificationCode"
 const val COOKIE = "Cookie"
+const val TOKEN = "token"
+const val PRE_NAME = "touch"
 
+const val TYPE_HEARTBEAT = 0
 const val TYPE_MSG = 1
 const val TYPE_CONNECTED = 2
 const val TYPE_ACK = 4
@@ -28,7 +31,7 @@ const val TYPE_ADD_FRIEND = 8
 const val TYPE_FRIEND_AGREE = 0x10
 const val TYPE_USER_NOT_EXIST = 0x20
 const val TYPE_USER_ALREADY_ADD = 0x40
-const val TYPE_OVERTIME = 0x80
+const val TYPE_OVERTIME = 0x100
 
 const val NAME_MIN_LENGTH = 4
 const val NAME_MAX_LENGTH = 16

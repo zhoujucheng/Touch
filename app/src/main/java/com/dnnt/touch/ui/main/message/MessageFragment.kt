@@ -5,10 +5,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.dnnt.touch.MyApplication
 
 import com.dnnt.touch.R
-import com.dnnt.touch.been.IMMsg
-import com.dnnt.touch.been.LatestChat
-import com.dnnt.touch.been.LatestChat_Table
-import com.dnnt.touch.been.User
+import com.dnnt.touch.been.*
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.ui.base.BaseFragment
 import com.dnnt.touch.ui.main.MainActivity
@@ -99,6 +96,7 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
             TYPE_MSG -> {
                 val imMsg = IMMsg.copyFromChatMsg(chatMsg)
                 imMsg.from = imMsg.to // 注意此处
+                imMsg.type = TYPE_MSG
                 updateLatestChat(imMsg)
             }
         }
@@ -132,13 +130,14 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
     }
 
     private fun updateLatestChat(imMsg: IMMsg){
-        val latestChat = (select from LatestChat::class
-                where LatestChat_Table.from.eq(imMsg.from).and(LatestChat_Table.to.eq(MyApplication.mUser?.id as Long)))
-            .querySingle()
-        if (latestChat != null) {
-            latestChat.latestMsg = imMsg.msg
-            latestChat.time = imMsg.time
-            latestChat.async().update()
+        //imMsg.from为对话用户的id，不论是发送消息还是接受消息
+        val id = MyApplication.mUser?.id as Long
+        val user = (select from User::class
+                where User_Table.id.eq(id).and(User_Table.friendId.eq(imMsg.from)))
+                .querySingle()
+        if (user != null){
+            val latestChat = LatestChat(imMsg.from,id,user.headUrl,user.userName,imMsg.time,imMsg.msg,imMsg.type)
+            latestChat.async().save()
             updateList(latestChat)
         }
     }

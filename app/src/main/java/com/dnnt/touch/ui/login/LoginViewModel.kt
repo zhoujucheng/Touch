@@ -1,6 +1,7 @@
 package com.dnnt.touch.ui.login
 
 import android.arch.lifecycle.MutableLiveData
+import android.content.Context
 import android.text.TextUtils
 import com.dnnt.touch.ui.base.BaseViewModel
 import com.dnnt.touch.MyApplication
@@ -32,18 +33,24 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
             nameOrPhone.length < NAME_MIN_LENGTH || nameOrPhone.length > NAME_MAX_LENGTH -> toast(R.string.name_or_phone_wrong)
             password.length < 6 -> toast(R.string.wrong_password)
             else -> {
-                val map = mapOf(Pair(NAME_OR_PHONE,nameOrPhone), Pair(PASSWORD,password))
+                val map = hashMapOf(Pair(NAME_OR_PHONE,nameOrPhone), Pair(PASSWORD,password))
                 mLoading.value = true
                 mNetService.login(map)
                         .delay(1000,TimeUnit.MILLISECONDS,mScheduler)
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
                         .subscribe({
-                            MyApplication.mUser = it.body()?.obj
+                            MyApplication.mUser = it.obj
                             MyApplication.mUser?.nickname = MyApplication.mUser?.userName
                             logi("Application User Login",MyApplication.mUser?.userName ?: "null")
-                            MyApplication.mToken = it.body()?.msg ?: ""
+                            MyApplication.mToken = it.msg
+                            map[TOKEN] = it.msg
                             mLoginEvent.call()
+                            val editor = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE).edit()
+                            map.forEach {
+                                editor.putString(it.key,it.value)
+                            }
+                            editor.apply()
                         }, {_,_ ->
                             toast(R.string.login_fail)
                         })

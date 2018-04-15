@@ -11,9 +11,13 @@ import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.util.*
 import io.netty.channel.ChannelDuplexHandler
 import io.netty.channel.ChannelHandlerContext
+import io.netty.handler.timeout.IdleState
+import io.netty.handler.timeout.IdleStateEvent
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 /**
@@ -32,7 +36,7 @@ class MsgHandler : ChannelDuplexHandler(){
             if (!NetworkReceiver.isNetUsable() || ctx.executor().isShutdown || ctx.executor().isTerminated){
                 return
             }
-            ctx.executor().submit{
+            ctx.executor().execute{
                 msg.seq = i
                 val chatMsg = ChatProto.ChatMsg.newBuilder()
                     .setFrom(msg.from)
@@ -73,7 +77,7 @@ class MsgHandler : ChannelDuplexHandler(){
             if (!NetworkReceiver.isNetUsable() || ctx.executor().isShutdown || ctx.executor().isTerminated){
                 return
             }
-            ctx.executor().submit{
+            ctx.executor().execute{
                 ctx.writeAndFlush(ChatProto.ChatMsg.newBuilder()
                     .setType(TYPE_ACK)
                     .setFrom(from)
@@ -85,6 +89,7 @@ class MsgHandler : ChannelDuplexHandler(){
     }
 
     override fun channelActive(ctx: ChannelHandlerContext) {
+        logi(TAG,"channelActive")
         MsgHandler.ctx = ctx
         ctx.writeAndFlush(
             ChatProto.ChatMsg.newBuilder()
@@ -93,7 +98,16 @@ class MsgHandler : ChannelDuplexHandler(){
                 .build())
     }
 
+    override fun channelInactive(ctx: ChannelHandlerContext?) {
+        super.channelInactive(ctx)
+        logi(TAG,"channelInActive")
+    }
+
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
+//        if (msg !is ChatProto.ChatMsg){
+//            ctx.fireChannelRead(msg)
+//            return
+//        }
         msg as ChatProto.ChatMsg
         when (msg.type){
         //将消息送到.ui.main.message.MessageFragment
@@ -141,15 +155,26 @@ class MsgHandler : ChannelDuplexHandler(){
             TYPE_USER_NOT_EXIST -> {
                 val temp = map.remove(msg.seq)
                 logi(TAG,temp?.msg ?: "null")
-                launch(UI) {
-                    toast(R.string.user_not_exist,temp?.msg ?: "")
-                }
+                launch(UI) { toast(R.string.user_not_exist,temp?.msg ?: "") }
             }
             TYPE_USER_ALREADY_ADD -> {
                 val temp = map.remove(msg.seq)
-                launch(UI) {
-                    toast(R.string.friend_already_add,temp?.msg ?: "")                }
+                launch(UI) { toast(R.string.friend_already_add,temp?.msg ?: "") }
             }
         }
     }
+
+    override fun userEventTriggered(ctx: ChannelHandlerContext?, evt: Any?) {
+        if (evt is IdleStateEvent){
+            if (evt.state() == IdleState.WRITER_IDLE){
+                ctx?.writeAndFlush(ChatProto.ChatMsg.newBuilder()
+                    .setType(TYPE_HEARTBEAT)
+                    .build())
+            }
+        }else{
+            super.userEventTriggered(ctx, evt)
+        }
+    }
+
+
 }

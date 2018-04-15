@@ -18,7 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="8dp"
-        android:onClick="@{(view) -> evenHandler.onItemClick(view,item)}">
+        android:onClick="@{(view) -> evenHandler.onItemClick(view,item)}"
+        android:onLongClick="@{(view) -> evenHandler.onLongClick(view,item)}">
 
         <View
             android:id="@+id/line"

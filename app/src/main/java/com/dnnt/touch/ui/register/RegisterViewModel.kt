@@ -40,14 +40,19 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
         }
         mNetService.getVerificationCode(phone)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    logi(TAG,it.headers().get("Set-Cookie"))
-                    cookie = it.headers().get("Set-Cookie")?.split(";")?.get(0) ?: ""
-                    toast(R.string.send_success)
-                },{msg,_ ->
-                    val failStr = getString(R.string.send_fail)
-                    toast("$failStr,$msg")
-                })
+            .subscribe({
+                if (it.isSuccessful){
+                    if (it.body()?.successful == true){
+                        logi(TAG,it.headers().get("Set-Cookie"))
+                        cookie = it.headers().get("Set-Cookie")?.split(";")?.get(0) ?: ""
+                        toast(R.string.send_success)
+                    }
+                }else{
+                    handleRequestFail(it)
+                }
+            },{
+                handleNetThrowable(it)
+            })
     }
 
     fun register(userName: String, password: String, password1: String,phone: String, code: String){
