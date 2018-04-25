@@ -69,4 +69,7 @@
     <string name="delete">删除</string>
 
     <string name="quit">退出</string>
+
+    <string name="reset_password_success">密码已重置</string>
+    <string name="permission_denied">"没有权限执行该操作"</string>
 </resources>

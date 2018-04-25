@@ -26,7 +26,7 @@ abstract class ActivityBindingModule {
     abstract fun registerActivity(): RegisterActivity
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = [ResetPwdModule::class])
+    @ContributesAndroidInjector(modules = [RegisterModule::class])
     abstract fun resetPwdActivity(): ResetPwdActivity
 
     @ActivityScoped

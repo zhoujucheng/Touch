@@ -72,12 +72,28 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
             TYPE_ADD_FRIEND -> handleAddFriend(chatMsg)
             TYPE_FRIEND_AGREE -> handleFriendAgree(chatMsg)
             TYPE_OVERTIME -> toast(R.string.add_friend_over_time,chatMsg.msg)
+            TYPE_HEAD_UPDATE -> handleHeadUpdate(chatMsg)
             else -> {
                 if (type and TYPE_ACK != 0){
                     handleAck(type xor TYPE_ACK,chatMsg)
                 }
             }
         }
+    }
+
+    private fun handleHeadUpdate(chatMsg: ChatProto.ChatMsg){
+        val user = User(chatMsg.type.toLong(),chatMsg.from,headUrl = chatMsg.msg)
+        //将消息送到.ui.main.ContactFragment
+        EventBus.getDefault().post(user)
+        mAdapter.mList.forEachIndexed { i, item ->
+            if (item.from == chatMsg.from){
+                item.async().save()
+                item.headUrl = chatMsg.msg
+                mAdapter.notifyItemChanged(i)
+                return
+            }
+        }
+
     }
 
     private fun handleAck(type: Int,chatMsg: ChatProto.ChatMsg){
@@ -143,7 +159,7 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
     }
 
     private fun updateUser(latestChat: LatestChat){
-        val newUser = User(latestChat.to,latestChat.from,latestChat.nickname,null,latestChat.headUrl,latestChat.nickname)
+        val newUser = User(-1L,latestChat.from,latestChat.nickname,null,latestChat.headUrl,latestChat.nickname)
         //将消息送到.ui.main.ContactFragment
         EventBus.getDefault().post(newUser)
     }

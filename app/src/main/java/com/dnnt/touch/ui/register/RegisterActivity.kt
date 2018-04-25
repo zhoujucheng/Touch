@@ -4,6 +4,8 @@ import android.arch.lifecycle.Observer
 import android.os.Bundle
 import com.dnnt.touch.R
 import com.dnnt.touch.ui.base.BaseActivity
+import com.dnnt.touch.util.CODE_TAG
+import com.dnnt.touch.util.CODE_TAG_REGISTER
 import com.dnnt.touch.util.PHONE
 import javax.inject.Inject
 import dagger.Lazy
@@ -17,6 +19,10 @@ class RegisterActivity : BaseActivity<RegisterViewModel>() {
 //    @Inject lateinit var registerFragmentProvider: Lazy<RegisterFragment>
 
     override fun init() {
+
+        val bundle = Bundle()
+        bundle.putInt(CODE_TAG, CODE_TAG_REGISTER)
+        phoneFragment.arguments = bundle
 
         supportFragmentManager.beginTransaction()
                 .add(R.id.container, phoneFragment)

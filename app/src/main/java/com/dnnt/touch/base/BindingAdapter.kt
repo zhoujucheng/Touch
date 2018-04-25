@@ -34,9 +34,8 @@ object BindingAdapter{
         }
         Glide.with(imageView)
             .load(realUrl)
-//                .apply(RequestOptions.signatureOf())
             .into(imageView)
-//            imageView.setImageURI()
+
     }
 
     @BindingConversion

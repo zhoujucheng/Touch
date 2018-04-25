@@ -7,7 +7,7 @@ import javax.inject.Inject
 /**
  * Created by dnnt on 18-1-26.
  */
-const val IP = "192.168.186.226"
+const val IP = "192.168.1.226"
 //const val IP = "120.79.250.237"
 const val PORT = "8080"
 const val BASE_URL = "http://$IP:$PORT/touch/"
@@ -31,9 +31,17 @@ const val TYPE_ADD_FRIEND = 8
 const val TYPE_FRIEND_AGREE = 0x10
 const val TYPE_USER_NOT_EXIST = 0x20
 const val TYPE_USER_ALREADY_ADD = 0x40
+const val TYPE_HEAD_UPDATE = 0X80
 const val TYPE_OVERTIME = 0x100
 
 const val NAME_MIN_LENGTH = 4
 const val NAME_MAX_LENGTH = 16
 
+const val CODE_TAG_REGISTER = 1
+const val CODE_TAG_RESET = 2
+const val CODE_TAG = "codeTag"
+
 const val SPLIT_CHAR = ';'
+
+const val ACTIVITY_SET_HEAD_REQUEST = 1
+const val READ_EXTERNAL_STORAGE = 1

@@ -10,6 +10,7 @@ import com.dnnt.touch.been.User
 import com.dnnt.touch.been.User_Table
 import com.dnnt.touch.ui.base.BaseFragment
 import com.dnnt.touch.ui.main.MainViewModel
+import com.dnnt.touch.util.TYPE_HEAD_UPDATE
 import com.dnnt.touch.util.USER_NAME
 import com.dnnt.touch.util.debugOnly
 import com.raizlabs.android.dbflow.kotlinextensions.*
@@ -48,9 +49,23 @@ class ContactFragment @Inject constructor(): BaseFragment<MainViewModel>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public fun addNewContact(user: User){
-        user.async().save()
-        mAdapter.insertAtFirst(user)
+    public fun addOrUpdateUser(user: User){
+        when(user.id){
+            -1L -> {
+                user.id = MyApplication.mUser?.id ?: 0L
+                user.async().save()
+                mAdapter.insertAtFirst(user)
+            }
+            TYPE_HEAD_UPDATE.toLong() -> {
+                mAdapter.mList.forEachIndexed { i, item ->
+                    if (item.friendId == user.friendId){
+                        item.headUrl = user.headUrl
+                        mAdapter.notifyItemChanged(i)
+                        return@forEachIndexed
+                    }
+                }
+            }
+        }
     }
 
     override fun getLayoutId() = R.layout.fragment_contact

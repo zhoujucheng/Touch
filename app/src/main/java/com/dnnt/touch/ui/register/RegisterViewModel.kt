@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit
 class RegisterViewModel @Inject constructor(): BaseViewModel() {
 
     companion object {
-        val TAG = "RegisterViewModel"
+        const val TAG = "RegisterViewModel"
     }
 
     @Inject lateinit var mNetService: NetService
@@ -33,12 +33,12 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
     val mLoading = MutableLiveData<Boolean>()
     private var cookie = ""
 
-    fun getVerificationCode(phone: String){
+    fun getVerificationCode(phone: String,codeTag: Int){
         if(phone.length != 11){
             toast("手机格式错误！")
             return
         }
-        mNetService.getVerificationCode(phone)
+        mNetService.getVerificationCode(phone,codeTag)
                 .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it.isSuccessful){
@@ -94,8 +94,22 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
                 })
     }
 
-    fun resetPassword(password: String, password1: String){
-//        TODO
+    fun resetPassword(password: String, password1: String,phone: String,code: String){
+        when{
+            password.length < 6 -> toast(R.string.password_least_six)
+            password != password1 -> toast(R.string.password_not_equal)
+            else -> {
+                val map = hashMapOf(Pair(PASSWORD,password), Pair(PHONE,phone),
+                    Pair(VERIFICATION_CODE,code))
+                mNetService.resetPassword(map,cookie)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({
+                        toast(R.string.reset_password_success)
+                    },{msg,_ ->
+                        toast(msg)
+                    })
+            }
+        }
     }
 
 }

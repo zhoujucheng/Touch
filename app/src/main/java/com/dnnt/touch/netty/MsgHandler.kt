@@ -94,6 +94,7 @@ class MsgHandler : ChannelDuplexHandler(){
         ctx.writeAndFlush(
             ChatProto.ChatMsg.newBuilder()
                 .setFrom(MyApplication.mUser?.id as Long)
+                .setMsg(MyApplication.mToken)
                 .setType(TYPE_CONNECTED)
                 .build())
     }
@@ -161,6 +162,7 @@ class MsgHandler : ChannelDuplexHandler(){
                 val temp = map.remove(msg.seq)
                 launch(UI) { toast(R.string.friend_already_add,temp?.msg ?: "") }
             }
+            TYPE_HEAD_UPDATE -> EventBus.getDefault().post(msg)
         }
     }
 
