@@ -1,7 +1,6 @@
 package com.dnnt.touch.di
 
 import android.content.Context
-import com.dnnt.touch.BuildConfig
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.network.NetService
 import com.dnnt.touch.receiver.NetworkReceiver
@@ -9,6 +8,7 @@ import com.dnnt.touch.util.BASE_URL
 import com.dnnt.touch.base.MyScheduler
 import com.dnnt.touch.base.NetworkNotAvailableException
 import com.dnnt.touch.util.debugOnly
+import com.dnnt.touch.util.getSSL
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import dagger.Module
@@ -51,15 +51,17 @@ class AppModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(executorService: ExecutorService): OkHttpClient{
+        val pair = getSSL()
         val clientBuilder = OkHttpClient.Builder()
-                //网络判断拦截器
-                .addInterceptor{
-                    if (!NetworkReceiver.isNetUsable()){
-                        throw NetworkNotAvailableException()
-                    }
-                    return@addInterceptor it.proceed(it.request())
+            //网络判断拦截器
+            .addInterceptor{
+                if (!NetworkReceiver.isNetUsable()){
+                    throw NetworkNotAvailableException()
                 }
-                .dispatcher(Dispatcher(executorService))
+                return@addInterceptor it.proceed(it.request())
+            }
+            .dispatcher(Dispatcher(executorService))
+            .sslSocketFactory(pair.first.socketFactory,pair.second)
         //在debug时，为okhttp设置日志拦截器
         debugOnly {
             val loggingInterceptor = HttpLoggingInterceptor()

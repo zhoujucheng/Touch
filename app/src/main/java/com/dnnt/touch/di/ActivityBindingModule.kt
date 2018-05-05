@@ -8,7 +8,6 @@ import com.dnnt.touch.ui.main.MainModule
 import com.dnnt.touch.ui.register.RegisterActivity
 import com.dnnt.touch.ui.register.RegisterModule
 import com.dnnt.touch.ui.resetpassword.ResetPwdActivity
-import com.dnnt.touch.ui.resetpassword.ResetPwdModule
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 

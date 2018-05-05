@@ -9,8 +9,8 @@ import javax.inject.Inject
  */
 const val IP = "192.168.1.226"
 //const val IP = "120.79.250.237"
-const val PORT = "8080"
-const val BASE_URL = "http://$IP:$PORT/touch/"
+const val PORT = "8443"
+const val BASE_URL = "https://$IP:$PORT/touch/"
 const val USER = "user"
 const val CHAT_USER_ID = "chatUserId"
 //  field

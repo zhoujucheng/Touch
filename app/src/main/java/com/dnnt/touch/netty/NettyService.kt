@@ -6,6 +6,7 @@ import android.os.Binder
 import android.os.IBinder
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.util.IP
+import com.dnnt.touch.util.getSSL
 import com.dnnt.touch.util.logi
 import com.raizlabs.android.dbflow.kotlinextensions.async
 import io.netty.bootstrap.Bootstrap
@@ -19,6 +20,7 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder
 import io.netty.handler.codec.protobuf.ProtobufEncoder
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender
+import io.netty.handler.ssl.SslHandler
 import io.netty.handler.timeout.IdleStateHandler
 import java.net.InetSocketAddress
 
@@ -51,7 +53,10 @@ class NettyService : Service() {
                 .handler(object : ChannelInitializer<SocketChannel>(){
                     override fun initChannel(ch: SocketChannel) {
                         val pl = ch.pipeline()
-//                        pl.addLast(IdleStateHandler(0,0,11))
+                        val sslContext = getSSL().first
+                        val sslEngine = sslContext.createSSLEngine()
+                        sslEngine.useClientMode = true
+                        pl.addLast(SslHandler(sslEngine))
                         pl.addLast(ProtobufVarint32FrameDecoder())
                         pl.addLast(ProtobufDecoder(ChatProto.ChatMsg.getDefaultInstance()))
                         pl.addLast(ProtobufVarint32LengthFieldPrepender())

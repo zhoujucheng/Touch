@@ -27,7 +27,6 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
     val mLoginEvent = SingleLiveEvent<Void>()
     val mLoading = MutableLiveData<Boolean>()
 
-
     fun login(nameOrPhone: String, password: String){
         when {
             nameOrPhone.length < NAME_MIN_LENGTH || nameOrPhone.length > NAME_MAX_LENGTH -> toast(R.string.name_or_phone_wrong)
@@ -42,7 +41,6 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
                         .subscribe({
                             MyApplication.mUser = it.obj
                             MyApplication.mUser?.nickname = MyApplication.mUser?.userName
-                            logi("Application User Login",MyApplication.mUser?.userName ?: "null")
                             MyApplication.mToken = it.msg
                             map[TOKEN] = it.msg
                             mLoginEvent.call()

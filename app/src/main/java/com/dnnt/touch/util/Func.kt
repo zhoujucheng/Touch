@@ -12,6 +12,11 @@ import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import retrofit2.Response
 import java.io.IOException
+import java.io.InputStream
+import java.security.KeyStore
+import java.security.cert.Certificate
+import java.security.cert.CertificateFactory
+import javax.net.ssl.*
 
 /**
  * Created by dnnt on 18-1-26.
@@ -62,4 +67,23 @@ fun <T> handleRequestFail(response: Response<T>){
 }
 
 
+fun getSSL():Pair<SSLContext,X509TrustManager>{
+    val keyStoreType = KeyStore.getDefaultType()
+    val keyStore = KeyStore.getInstance(keyStoreType)
+    keyStore.load(null, null)
+    val caIS = MyApplication.mContext.assets.open("tomcat_local.cer")
+    val certificateFactory = CertificateFactory.getInstance("X.509")
+    val ca = certificateFactory.generateCertificate(caIS)
+    caIS.close()
+    keyStore.setCertificateEntry("tomcat", ca)
+    val tmfAlgorithm = TrustManagerFactory.getDefaultAlgorithm()
+    val tmf = TrustManagerFactory.getInstance(tmfAlgorithm)
+    tmf.init(keyStore)
+    val tms = tmf.trustManagers
+    val sslContext = SSLContext.getInstance("TLS")
+    sslContext.init(null, tms, null)
+    return Pair(sslContext,tms[0] as X509TrustManager)
+}
 
+fun test(){
+}
