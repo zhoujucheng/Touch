@@ -21,24 +21,6 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
     private lateinit var user: User
 
     override fun init() {
-//        debugOnly {
-//            User(1,"dtjc","18255132583","","","/user/head/default.png","dtjc").save()
-//            User(2,"dnnt","18255132585","","","/user/head/default.png","dnnt").save()
-//            launch(CommonPool) {
-//                delay(10000)
-//                var i = 0
-//                repeat(100){
-//                    delay(500)
-//                    launch(UI) {
-//                        edit_msg.setText("$i,send from ${user.id}")
-//                        msg_send.performClick()
-//                    }.join()
-//                    i++
-//                }
-//            }
-//        }
-
-
         EventBus.getDefault().register(this)
         initData()
         initRecyclerView()
@@ -52,7 +34,6 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
         user = (select from User::class
                 where (User_Table.id.eq(id)).and(User_Table.friendId.eq(userId)))
             .querySingle() as User
-        mViewModel.chatUser = user
         mViewModel.mAdapter = ChatAdapter(user)
         mViewModel.loadMore(user.friendId)
     }
@@ -63,7 +44,7 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
             adapter = mViewModel.mAdapter
             addOnScrollListener(object : RecyclerScrollListener() {
                 override fun loadMore() {
-                    mViewModel.loadMore(user.id)
+                    mViewModel.loadMore(user.friendId)
                 }
             })
         }
@@ -89,10 +70,9 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
             }
             TYPE_ACK -> {
                 mViewModel.handleAck(imMsg)
-                //TODO update ui
             }
-            TYPE_OVERTIME -> {
-                //TODO update ui
+            TYPE_SEND_FAIL -> {
+                mViewModel.handleSendFail(imMsg)
             }
         }
     }

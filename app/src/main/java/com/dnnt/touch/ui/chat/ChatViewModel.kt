@@ -23,15 +23,14 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
 
     private val limit = 15
     private var offset = 0
-    lateinit var chatUser: User
     lateinit var mAdapter: ChatAdapter
 
     fun loadMore(chatUserId: Long){
         val userId = MyApplication.mUser?.id as Long
         val list = (select from IMMsg::class
-                where IMMsg_Table.userId.eq(userId)
-//                ((IMMsg_Table.from.eq(userId)).and(IMMsg_Table.to.eq(chatUserId)))
-//                        .or(IMMsg_Table.from.eq(chatUserId).and(IMMsg_Table.to.eq(userId)))
+                where IMMsg_Table.userId.eq(userId).and(
+                    ((IMMsg_Table.from.eq(userId)).and(IMMsg_Table.to.eq(chatUserId)))
+                        .or(IMMsg_Table.from.eq(chatUserId).and(IMMsg_Table.to.eq(userId))))
                 limit limit
                 offset offset
                 orderBy (IMMsg_Table.time.desc())).list
@@ -40,16 +39,30 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
     }
 
     fun handleMsg(imMsg: IMMsg){
-        imMsg.save()
-//        LatestChat(chatUser.id,chatUser.headUrl,chatUser.userName, imMsg.time,imMsg.msg).save()
-        offset++
         mAdapter.insertAtFirst(imMsg)
+        imMsg.save()
+        offset++
     }
 
     fun handleAck(imMsg: IMMsg){
+        notifyIMMsgChange(imMsg)
         imMsg.save()
-//        LatestChat(chatUser.id,chatUser.headUrl,chatUser.userName, imMsg.time,imMsg.msg).save()
         offset++
+    }
+
+    fun handleSendFail(imMsg: IMMsg){
+        notifyIMMsgChange(imMsg)
+        imMsg.save()
+        offset++
+    }
+
+    private fun notifyIMMsgChange(imMsg: IMMsg){
+        mAdapter.mList.forEachIndexed { i,item ->
+            if (item.seq == imMsg.seq){
+                mAdapter.notifyItemChanged(i)
+                return
+            }
+        }
     }
 
     fun sendMsg(imMsg: IMMsg){

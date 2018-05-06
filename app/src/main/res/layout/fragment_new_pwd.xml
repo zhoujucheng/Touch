@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.dnnt.touch.ui.resetpassword.NewPwdFragment">
-
         <include layout="@layout/password_set" />
 
     </FrameLayout>

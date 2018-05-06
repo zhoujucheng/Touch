@@ -1,9 +1,7 @@
 package com.dnnt.touch.network
 
 import com.dnnt.touch.SingleTon
-import com.dnnt.touch.util.NAME_OR_PHONE
-import com.dnnt.touch.util.PASSWORD
-import com.dnnt.touch.util.USER_NAME
+import com.dnnt.touch.util.*
 import org.junit.Test
 import org.junit.Assert.*
 
@@ -12,35 +10,60 @@ import org.junit.Assert.*
  */
 class NetServiceTest {
 
-    private val mNetService = SingleTon.netService!!
+    companion object {
+        private var token = ""
+        private val mNetService = SingleTon.netService
+
+    }
+
     private var code: Int = 0
+    val successful = 200
+
+
 
     @Test
-    fun login(){
-        mNetService.login(mapOf(Pair(NAME_OR_PHONE, "abc"), Pair(PASSWORD, "abc")))
-                .subscribe{
-                    println(it.body()?.obj?.phone ?: "null")
-                    code = it.code()
-                }
-        assertEquals(200,code)
-    }
-
-    @Test
-    fun getVerificationCode(){
-        mNetService.getVerificationCode("18255132583")
+    fun loginTest(){
+        println("loginTest")
+        mNetService.login(hashMapOf(Pair(NAME_OR_PHONE, "18255132583"), Pair(PASSWORD, "654321")))
                 .subscribe({
+                    println("onNext:")
+                    println(it.body()?.obj?.phone ?: "null")
+                    token = it.body()?.msg ?: ""
+                    println("token: $token")
                     code = it.code()
+                },{
+                    println("onError:")
+                    it.printStackTrace()
+                },{ println("onComplete")},{
+                    println("onSubscribe")
+//                    it.dispose()
                 })
-        assertEquals(200,code)
+        assertEquals(successful,code)
     }
 
-//    @Test
-//    fun codeVerification(){
-//        mNetService.codeVerification("123456","456123",)
-//                .subscribe({
-//                    code = it.code()
-//                })
-//        assertEquals(0,code)
-//    }
+    @Test
+    fun changePasswordTest(){
+        mNetService.changePassword(hashMapOf(Pair(ID,"3"), Pair(OLD_PASSWORD,"123456"), Pair(NEW_PASSWORD,"654321")))
+            .subscribe {
+                code = it.code()
+                println("msg: ${it.body()?.msg}")
+            }
+        assertEquals(successful,code)
+    }
 
+    @Test
+    fun tokenTest(){
+        println("tokenTest")
+        println("token: $token")
+//        Thread.sleep(22000)
+        mNetService.getTest(token)
+            .subscribe {
+                code = it.code()
+                if (!it.isSuccessful){
+                    println("error body:\n${it.errorBody()?.string()}")
+                    println("message: \n{it.message()}")
+                }
+            }
+        assertEquals(successful,code)
+    }
 }

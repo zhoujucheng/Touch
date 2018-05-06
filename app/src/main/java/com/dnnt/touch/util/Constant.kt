@@ -22,6 +22,9 @@ const val VERIFICATION_CODE = "verificationCode"
 const val COOKIE = "Cookie"
 const val TOKEN = "token"
 const val PRE_NAME = "touch"
+const val ID = "id"
+const val OLD_PASSWORD = "oldPassword"
+const val NEW_PASSWORD = "newPassword"
 
 const val TYPE_HEARTBEAT = 0
 const val TYPE_MSG = 1
@@ -32,10 +35,13 @@ const val TYPE_FRIEND_AGREE = 0x10
 const val TYPE_USER_NOT_EXIST = 0x20
 const val TYPE_USER_ALREADY_ADD = 0x40
 const val TYPE_HEAD_UPDATE = 0X80
-const val TYPE_OVERTIME = 0x100
+const val TYPE_SEND_FAIL = 0x100
+const val TYPE_OVERTIME = 0x200
 
 const val NAME_MIN_LENGTH = 4
 const val NAME_MAX_LENGTH = 16
+const val PWD_MAX_LEN = 16
+const val PWD_MIN_LEN = 6
 
 const val CODE_TAG_REGISTER = 1
 const val CODE_TAG_RESET = 2

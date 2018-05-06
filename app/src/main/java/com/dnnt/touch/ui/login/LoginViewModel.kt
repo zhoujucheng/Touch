@@ -30,7 +30,7 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
     fun login(nameOrPhone: String, password: String){
         when {
             nameOrPhone.length < NAME_MIN_LENGTH || nameOrPhone.length > NAME_MAX_LENGTH -> toast(R.string.name_or_phone_wrong)
-            password.length < 6 -> toast(R.string.wrong_password)
+            password.length < PWD_MIN_LEN || password.length > PWD_MAX_LEN -> toast(R.string.wrong_password)
             else -> {
                 val map = hashMapOf(Pair(NAME_OR_PHONE,nameOrPhone), Pair(PASSWORD,password))
                 mLoading.value = true

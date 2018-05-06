@@ -20,8 +20,6 @@ class CrashHandler @Inject constructor(context: Context): Thread.UncaughtExcepti
     private val mDefaultHandler: Thread.UncaughtExceptionHandler? = Thread.getDefaultUncaughtExceptionHandler()
     private val mContext = context
 
-
-
     init {
         Thread.setDefaultUncaughtExceptionHandler(this)
     }

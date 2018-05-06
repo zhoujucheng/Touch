@@ -34,7 +34,9 @@
         <service
             android:name=".netty.NettyService"
             android:enabled="true"
-            android:exported="false"/>
+            android:exported="false" />
+
+        <activity android:name=".ui.changepassword.ChangePwdActivity"></activity>
     </application>
 
 </manifest>

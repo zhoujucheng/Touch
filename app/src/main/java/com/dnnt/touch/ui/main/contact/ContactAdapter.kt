@@ -24,7 +24,6 @@ class ContactAdapter : BaseAdapter<User>(){
                 intent.putExtra(CHAT_USER_ID,item.friendId)
                 view.context.startActivity(intent)
             }
-
         }
     }
 

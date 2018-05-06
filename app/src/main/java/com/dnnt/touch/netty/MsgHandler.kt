@@ -9,6 +9,8 @@ import com.dnnt.touch.been.User
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.util.*
+import com.raizlabs.android.dbflow.kotlinextensions.async
+import com.raizlabs.android.dbflow.kotlinextensions.save
 import io.netty.channel.ChannelDuplexHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.timeout.IdleState
@@ -31,13 +33,12 @@ class MsgHandler : ChannelDuplexHandler(){
         private val map = hashMapOf<Int,IMMsg>()
         private var seq = 1 //消息序列
         fun sendMsg(msg: IMMsg){
-            //TODO check network
             val i = seq++
             if (!NetworkReceiver.isNetUsable() || ctx.executor().isShutdown || ctx.executor().isTerminated){
                 return
             }
+            msg.seq = i
             ctx.executor().execute{
-                msg.seq = i
                 val chatMsg = ChatProto.ChatMsg.newBuilder()
                     .setFrom(msg.from)
                     .setTo(msg.to)
@@ -59,11 +60,10 @@ class MsgHandler : ChannelDuplexHandler(){
                 if (temp != null){
                     map.remove(i)
                     if (temp.type == TYPE_MSG){
-                        temp.type = TYPE_OVERTIME
-                        //将消息送到.ui.chat.ChatActivity
-                        EventBus.getDefault().post(temp)
+                        temp.type = TYPE_SEND_FAIL
+                        handleIMMsg(temp)
                     }else if (temp.type == TYPE_ADD_FRIEND){
-                        //TODO 处理添加好友超时
+                        //将消息送到.ui.main.message.MessageFragment
                         EventBus.getDefault().post(ChatProto.ChatMsg.newBuilder()
                             .setType(TYPE_OVERTIME)
                             .setMsg(temp.msg)
@@ -84,6 +84,15 @@ class MsgHandler : ChannelDuplexHandler(){
                     .setTime(time)
                     .setSeq(seq)
                     .build())
+            }
+        }
+
+        fun handleIMMsg(temp: IMMsg){
+            if (temp.to == MyApplication.mUser?.friendId){
+                //将消息送到.ui.chat.ChatActivity
+                EventBus.getDefault().post(temp)
+            }else{
+                temp.async().save()
             }
         }
     }
@@ -111,8 +120,9 @@ class MsgHandler : ChannelDuplexHandler(){
 //        }
         msg as ChatProto.ChatMsg
         when (msg.type){
-        //将消息送到.ui.main.message.MessageFragment
+
             TYPE_MSG, TYPE_ADD_FRIEND, TYPE_FRIEND_AGREE -> {
+                //将消息送到.ui.main.message.MessageFragment
                 EventBus.getDefault().post(msg)
                 MsgHandler.sendACK(msg.from,msg.seq,msg.time)
             }
@@ -126,8 +136,7 @@ class MsgHandler : ChannelDuplexHandler(){
                     when(temp.type){
                         TYPE_MSG -> {
                             temp.type = TYPE_ACK
-                            //将消息送到.ui.chat.ChatActivity
-                            EventBus.getDefault().post(temp)
+                            handleIMMsg(temp)
                             val chatMsg = ChatProto.ChatMsg.newBuilder()
                                 .setFrom(temp.from)
                                 .setMsg(temp.msg)
@@ -162,9 +171,19 @@ class MsgHandler : ChannelDuplexHandler(){
                 val temp = map.remove(msg.seq)
                 launch(UI) { toast(R.string.friend_already_add,temp?.msg ?: "") }
             }
+        //将消息送到.ui.main.message.MessageFragment
             TYPE_HEAD_UPDATE -> EventBus.getDefault().post(msg)
+            TYPE_SEND_FAIL ->{
+                val temp = map.remove(msg.seq)
+                if (temp != null){
+                    temp.type = TYPE_SEND_FAIL
+                    handleIMMsg(temp)
+                }
+            }
         }
     }
+
+
 
     override fun userEventTriggered(ctx: ChannelHandlerContext?, evt: Any?) {
         if (evt is IdleStateEvent){

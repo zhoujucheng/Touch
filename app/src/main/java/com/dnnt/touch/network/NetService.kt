@@ -38,13 +38,16 @@ interface NetService {
 
     @POST("user/resetPassword")
     @FormUrlEncoded
-    fun resetPassword(@FieldMap map: Map<String, String>,@Header(COOKIE) cookie: String): Observable<Response<Json<String>>>
+    fun resetPassword(@FieldMap map: Map<String, String>,@Header(COOKIE) cookie: String): Observable<Response<Json<Unit>>>
 
     @POST("user/updateHead")
     @Multipart
     fun updateHead(@Part("token") token: RequestBody, @Part head: MultipartBody.Part): Observable<Response<Json<String>>>
 
-
     @GET("user/test")
-    fun getTest(): Observable<String>
+    fun getTest(@Query("token") token: String): Observable<Response<Json<String>>>
+
+    @POST("user/changePassword")
+    @FormUrlEncoded
+    fun changePassword(@FieldMap map:Map<String,String>): Observable<Response<Json<Unit>>>
 }

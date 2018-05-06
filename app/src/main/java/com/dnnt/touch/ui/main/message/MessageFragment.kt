@@ -59,6 +59,7 @@ class MessageFragment @Inject constructor() : BaseFragment<MainViewModel>() {
         //进入ChatActivity时，将chatId设置为对话用户的id
         //退出ChatActivity时,将chatId设置为NONE
         chatId = latestChat.from
+        MyApplication.mUser?.friendId = chatId
         if (chatId == NONE){
             EventBus.getDefault().removeAllStickyEvents()
         }

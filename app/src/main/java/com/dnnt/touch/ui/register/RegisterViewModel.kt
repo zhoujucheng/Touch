@@ -58,7 +58,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
     fun register(userName: String, password: String, password1: String,phone: String, code: String){
         when {
             !isNameLegal(userName) -> toast(R.string.user_name_hint)
-            password.length < 6 -> toast(R.string.password_least_six)
+            password.length < PWD_MIN_LEN || password.length > PWD_MAX_LEN -> toast(R.string.pwd_len_wrong)
             password != password1 -> toast(R.string.password_not_equal)
             else -> {
                 val map = mapOf(Pair(USER_NAME,userName), Pair(PASSWORD,password),Pair(PHONE,phone),
@@ -96,7 +96,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
 
     fun resetPassword(password: String, password1: String,phone: String,code: String){
         when{
-            password.length < 6 -> toast(R.string.password_least_six)
+            password.length < PWD_MIN_LEN || password.length > PWD_MAX_LEN -> toast(R.string.pwd_len_wrong)
             password != password1 -> toast(R.string.password_not_equal)
             else -> {
                 val map = hashMapOf(Pair(PASSWORD,password), Pair(PHONE,phone),
@@ -104,7 +104,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
                 mNetService.resetPassword(map,cookie)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        toast(R.string.reset_password_success)
+                        toast(R.string.change_password_success)
                     },{msg,_ ->
                         toast(msg)
                     })

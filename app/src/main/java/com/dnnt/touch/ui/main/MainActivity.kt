@@ -37,6 +37,7 @@ import com.dnnt.touch.netty.NettyService
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.ui.base.BaseActivity
+import com.dnnt.touch.ui.changepassword.ChangePwdActivity
 import com.dnnt.touch.ui.login.LoginActivity
 import com.dnnt.touch.ui.main.contact.ContactFragment
 import com.dnnt.touch.ui.main.message.MessageFragment
@@ -163,7 +164,7 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         }
     }
 
-    fun openAlbum() {
+    private fun openAlbum() {
         val intent = Intent()
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "image/*"
@@ -193,6 +194,9 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.add_friend -> handleAddFriend()
+            R.id.change_password -> {
+                startActivity(ChangePwdActivity::class.java)
+            }
             R.id.quit -> {
                 startActivity(Intent(this,LoginActivity::class.java))
                 this.finish()

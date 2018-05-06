@@ -1,5 +1,6 @@
 package com.dnnt.touch.di
 
+import com.dnnt.touch.ui.changepassword.ChangePwdActivity
 import com.dnnt.touch.ui.chat.ChatActivity
 import com.dnnt.touch.ui.login.LoginActivity
 import com.dnnt.touch.ui.login.LoginModule
@@ -35,4 +36,8 @@ abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector()
     abstract fun chatActivity(): ChatActivity
+
+    @ActivityScoped
+    @ContributesAndroidInjector()
+    abstract fun changePwdActivity(): ChangePwdActivity
 }

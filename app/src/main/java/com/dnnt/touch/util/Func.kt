@@ -41,6 +41,7 @@ fun <T : Json<U>,U> Observable<Response<T>>.subscribe
                     }
                 }, { handleNetThrowable(it) }, onComplete, onSubscribe)!!
 
+//onFailure并不是请求失败的，是请求成功的，但由于某些原因操作失败而调用，如因密码错误而登录失败
 fun <T : Json<U>,U> Observable<Response<T>>.subscribe(onSuccess: (T) -> Unit, onFailure: (String,Int) -> Unit) =
     subscribe(onSuccess, onFailure, {}, {})
 

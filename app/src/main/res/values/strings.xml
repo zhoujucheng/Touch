@@ -33,12 +33,12 @@
     <string name="register_fail">注册失败</string>
     <string name="user_name_empty">昵称不能为空</string>
     <string name="hint_register_password">密码,至少为六位</string>
-    <string name="password_least_six">密码最少为六位</string>
+    <string name="pwd_len_wrong">密码不得小于6位或大于16位</string>
     <string name="password_not_equal">两次密码不相同</string>
     <string name="registering">正在注册</string>
-    <!--<string name="password_max_len">16</string>-->
 
     <string name="new_password">新密码</string>
+    <string name="old_password">旧密码</string>
     <string name="confirm">确定</string>
 
     <!--Error strings-->
@@ -47,7 +47,6 @@
     <string name="unknown_error">发生未知错误</string>
     <string name="server_error">服务器错误</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main">MainActivity</string>
 
@@ -67,9 +66,10 @@
     <string name="friend_already_add">你已添加该用户(%1$s)为好友</string>
 
     <string name="delete">删除</string>
-
+    <string name="changePassword">修改密码</string>
     <string name="quit">退出</string>
 
     <string name="reset_password_success">密码已重置</string>
+    <string name="change_password_success">密码已修改</string>
     <string name="permission_denied">"没有权限执行该操作"</string>
 </resources>

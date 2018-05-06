@@ -51,15 +51,17 @@ class ContactFragment @Inject constructor(): BaseFragment<MainViewModel>() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun addOrUpdateUser(user: User){
         when(user.id){
+            //-1代表新加的好友
             -1L -> {
                 user.id = MyApplication.mUser?.id ?: 0L
-                user.async().save()
                 mAdapter.insertAtFirst(user)
+                user.async().insert()
             }
             TYPE_HEAD_UPDATE.toLong() -> {
                 mAdapter.mList.forEachIndexed { i, item ->
                     if (item.friendId == user.friendId){
                         item.headUrl = user.headUrl
+                        item.async().update()
                         mAdapter.notifyItemChanged(i)
                         return@forEachIndexed
                     }

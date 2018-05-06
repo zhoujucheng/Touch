@@ -11,16 +11,11 @@ import javax.inject.Inject
 class NewPwdFragment @Inject constructor() : BaseFragment<RegisterViewModel>() {
 
     override fun init() {
-
-
-//        val bundle = arguments?.getBundle()
         
         val phone = arguments?.getString(PHONE) ?: ""
         val code = arguments?.getString(VERIFICATION_CODE) ?: ""
 
         complete.setOnClickListener {
-//            TODO
-//            val map = hashMapOf(Pai)
             mViewModel.resetPassword(password.text.toString(),password1.text.toString(),phone,code)
         }
 

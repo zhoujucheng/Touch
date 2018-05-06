@@ -41,6 +41,10 @@
         android:id="@+id/add_friend"
         android:title="@string/add_friend" />
 
+    <item
+        android:id="@+id/change_password"
+        android:title="@string/changePassword"/>
+
     <item android:id="@+id/quit"
         android:title="@string/quit" />
 
