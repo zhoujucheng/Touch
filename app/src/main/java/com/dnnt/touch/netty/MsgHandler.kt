@@ -63,7 +63,7 @@ class MsgHandler : ChannelDuplexHandler(){
                         temp.type = TYPE_SEND_FAIL
                         handleIMMsg(temp)
                     }else if (temp.type == TYPE_ADD_FRIEND){
-                        //将消息送到.ui.main.message.MessageFragment
+                        //将消息送到.ui.main.message.LatestChatFragment
                         EventBus.getDefault().post(ChatProto.ChatMsg.newBuilder()
                             .setType(TYPE_OVERTIME)
                             .setMsg(temp.msg)
@@ -122,7 +122,7 @@ class MsgHandler : ChannelDuplexHandler(){
         when (msg.type){
 
             TYPE_MSG, TYPE_ADD_FRIEND, TYPE_FRIEND_AGREE -> {
-                //将消息送到.ui.main.message.MessageFragment
+                //将消息送到.ui.main.message.LatestChatFragment
                 EventBus.getDefault().post(msg)
                 MsgHandler.sendACK(msg.from,msg.seq,msg.time)
             }
@@ -144,11 +144,11 @@ class MsgHandler : ChannelDuplexHandler(){
                                 .setType(TYPE_ACK or  TYPE_MSG)
                                 .setTime(temp.time.time)
                                 .build()
-                            //将消息送到.ui.main.message.MessageFragment
+                            //将消息送到.ui.main.message.LatestChatFragment
                             EventBus.getDefault().post(chatMsg)
                         }
                         TYPE_FRIEND_AGREE -> {
-                            //将消息送到.ui.main.message.MessageFragment
+                            //将消息送到.ui.main.message.LatestChatFragment
                             val chatMsg = msg.toBuilder()
                                 .setFrom(temp.from)
                                 .setTo(temp.to)
@@ -171,7 +171,7 @@ class MsgHandler : ChannelDuplexHandler(){
                 val temp = map.remove(msg.seq)
                 launch(UI) { toast(R.string.friend_already_add,temp?.msg ?: "") }
             }
-        //将消息送到.ui.main.message.MessageFragment
+        //将消息送到.ui.main.message.LatestChatFragment
             TYPE_HEAD_UPDATE -> EventBus.getDefault().post(msg)
             TYPE_SEND_FAIL ->{
                 val temp = map.remove(msg.seq)

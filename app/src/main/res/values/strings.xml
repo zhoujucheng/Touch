@@ -68,6 +68,8 @@
     <string name="delete">删除</string>
     <string name="changePassword">修改密码</string>
     <string name="quit">退出</string>
+    <string name="update_head_success">上传头像成功</string>
+
 
     <string name="reset_password_success">密码已重置</string>
     <string name="change_password_success">密码已修改</string>

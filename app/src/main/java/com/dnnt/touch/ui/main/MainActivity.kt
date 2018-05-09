@@ -40,7 +40,7 @@ import com.dnnt.touch.ui.base.BaseActivity
 import com.dnnt.touch.ui.changepassword.ChangePwdActivity
 import com.dnnt.touch.ui.login.LoginActivity
 import com.dnnt.touch.ui.main.contact.ContactFragment
-import com.dnnt.touch.ui.main.message.MessageFragment
+import com.dnnt.touch.ui.main.message.LatestChatFragment
 import com.dnnt.touch.util.*
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import com.raizlabs.android.dbflow.sql.language.From
@@ -68,7 +68,7 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         val TAG = "MainActivity"
     }
 
-    @Inject lateinit var messageFragmentProvider: Lazy<MessageFragment>
+    @Inject lateinit var latestChatFragmentProvider: Lazy<LatestChatFragment>
     @Inject lateinit var contactFragmentProvider: Lazy<ContactFragment>
     @Inject lateinit var networkReceiver: NetworkReceiver
 
@@ -82,7 +82,7 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val fragmentList = listOf<Lazy<out DaggerFragment>>(messageFragmentProvider, contactFragmentProvider)
+        val fragmentList = listOf<Lazy<out DaggerFragment>>(latestChatFragmentProvider, contactFragmentProvider)
         val pagerAdapter = MainPagerAdapter(supportFragmentManager,fragmentList)
         view_pager.adapter = pagerAdapter
 

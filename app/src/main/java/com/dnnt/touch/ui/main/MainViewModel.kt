@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import com.bumptech.glide.Glide
 import com.dnnt.touch.MyApplication
+import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
 import com.dnnt.touch.been.User
 import com.dnnt.touch.di.ActivityScoped
@@ -18,6 +19,7 @@ import com.raizlabs.android.dbflow.kotlinextensions.async
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.greenrobot.eventbus.EventBus
 import com.dnnt.touch.util.subscribe
+import com.dnnt.touch.util.toast
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -36,25 +38,7 @@ class MainViewModel @Inject constructor(): BaseViewModel(){
         const val TAG = "MainViewModel"
     }
 
-    val loadUsers = MutableLiveData<List<User>>()
-
     @Inject lateinit var netService: NetService
-    fun freshFriends(token: String){
-        netService.getFriends(token)
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                val list = it.obj
-                if (list != null && list.isNotEmpty()){
-                    list.forEach {
-                        it.friendId = it.id
-                        it.id = MyApplication.mUser?.id ?: 0
-                        it.async().save()
-                    }
-                    loadUsers.value = list
-                }
-            },{_,_ ->
-            })
-    }
 
     fun updateHead(resource: Bitmap, headCache: File){
         val tokenBody =  RequestBody.create(MediaType.parse("multipart/form-data"), MyApplication.mToken)
@@ -65,8 +49,9 @@ class MainViewModel @Inject constructor(): BaseViewModel(){
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 MyApplication.mUser?.headUrl = it.obj ?: ""
-            },{_,_ ->
-
+                toast(R.string.update_head_success)
+            },{msg,_ ->
+                toast(msg)
             })
     }
 }

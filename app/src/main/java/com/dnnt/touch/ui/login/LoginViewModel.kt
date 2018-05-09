@@ -22,7 +22,7 @@ import javax.inject.Inject
 @ActivityScoped
 class LoginViewModel @Inject constructor(): BaseViewModel() {
 
-    @Inject lateinit var mScheduler: MyScheduler
+//    @Inject lateinit var mScheduler: MyScheduler
     @Inject lateinit var mNetService: NetService
     val mLoginEvent = SingleLiveEvent<Void>()
     val mLoading = MutableLiveData<Boolean>()
@@ -35,7 +35,7 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
                 val map = hashMapOf(Pair(NAME_OR_PHONE,nameOrPhone), Pair(PASSWORD,password))
                 mLoading.value = true
                 mNetService.login(map)
-                        .delay(1000,TimeUnit.MILLISECONDS,mScheduler)
+//                        .delay(500,TimeUnit.MILLISECONDS,mScheduler)
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
                         .subscribe({

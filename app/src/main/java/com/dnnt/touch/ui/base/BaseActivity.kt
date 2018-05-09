@@ -20,7 +20,7 @@ import dagger.android.support.DaggerAppCompatActivity
 abstract class BaseActivity<T: ViewModel> : DaggerAppCompatActivity() {
 
 //    必须在子类中进行注入
-    protected lateinit var mViewModel: T
+    lateinit var mViewModel: T
     protected lateinit var mDataBinding: ViewDataBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,13 +1,15 @@
 package com.dnnt.touch.ui.chat
 
+import android.arch.lifecycle.MutableLiveData
+import android.databinding.ObservableArrayList
+import android.databinding.ObservableInt
+import android.databinding.ObservableList
 import com.dnnt.touch.MyApplication
-import com.dnnt.touch.been.IMMsg
-import com.dnnt.touch.been.IMMsg_Table
-import com.dnnt.touch.been.LatestChat
-import com.dnnt.touch.been.User
+import com.dnnt.touch.been.*
 import com.dnnt.touch.di.ActivityScoped
 import com.dnnt.touch.netty.MsgHandler
 import com.dnnt.touch.ui.base.BaseViewModel
+import com.dnnt.touch.util.CHAT_USER_ID
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import java.util.*
 import javax.inject.Inject
@@ -21,9 +23,12 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
         val TAG = "ChatViewModel"
     }
 
+    val items = ObservableArrayList<IMMsg>()
+    val itemChangeEvent = MutableLiveData<Int>()
+
     private val limit = 15
     private var offset = 0
-    lateinit var mAdapter: ChatAdapter
+
 
     fun loadMore(chatUserId: Long){
         val userId = MyApplication.mUser?.id as Long
@@ -34,12 +39,23 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
                 limit limit
                 offset offset
                 orderBy (IMMsg_Table.time.desc())).list
-        mAdapter.insertAtLast(list)
+
+        items.addAll(list)
+
         offset += list.size
     }
 
+    fun initData(chatUserId: Long): User{
+        val id = MyApplication.mUser?.id as Long
+        val user = (select from User::class
+                where (User_Table.id.eq(id)).and(User_Table.friendId.eq(chatUserId)))
+            .querySingle() as User
+        loadMore(user.friendId)
+        return user
+    }
+
     fun handleMsg(imMsg: IMMsg){
-        mAdapter.insertAtFirst(imMsg)
+        items.add(0,imMsg)
         imMsg.save()
         offset++
     }
@@ -51,15 +67,16 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
     }
 
     fun handleSendFail(imMsg: IMMsg){
+
         notifyIMMsgChange(imMsg)
         imMsg.save()
         offset++
     }
 
     private fun notifyIMMsgChange(imMsg: IMMsg){
-        mAdapter.mList.forEachIndexed { i,item ->
+        items.forEachIndexed { i,item ->
             if (item.seq == imMsg.seq){
-                mAdapter.notifyItemChanged(i)
+                itemChangeEvent.value = i
                 return
             }
         }
@@ -67,8 +84,6 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
 
     fun sendMsg(imMsg: IMMsg){
         MsgHandler.sendMsg(imMsg)
-        mAdapter.insertAtFirst(imMsg)
+        items.add(0,imMsg)
     }
-
-
 }

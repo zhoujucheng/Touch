@@ -6,9 +6,6 @@
         <variable
             name="viewModel"
             type="com.dnnt.touch.ui.chat.ChatViewModel" />
-        <variable
-            name="user"
-            type="com.dnnt.touch.been.User" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -40,6 +37,7 @@
             android:id="@+id/recycle_view_chat"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:items="@{viewModel.items}"
             app:layout_constraintBottom_toTopOf="@+id/edit_msg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -47,4 +45,3 @@
 
     </android.support.constraint.ConstraintLayout>
 </layout>
-

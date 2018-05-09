@@ -6,7 +6,7 @@ import com.dnnt.touch.MyApplication
 import com.dnnt.touch.base.RecyclerScrollListener
 import com.dnnt.touch.been.*
 import com.dnnt.touch.ui.base.BaseActivity
-import com.dnnt.touch.ui.main.message.MessageFragment
+import com.dnnt.touch.ui.main.message.LatestChatFragment
 import com.dnnt.touch.util.*
 import com.raizlabs.android.dbflow.kotlinextensions.*
 import kotlinx.android.synthetic.main.activity_chat.*
@@ -15,36 +15,36 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 import javax.inject.Inject
+import android.arch.lifecycle.Observer
 
 class ChatActivity : BaseActivity<ChatViewModel>() {
 
-    private lateinit var user: User
+    private var chatUserId = 0L
+    private lateinit var mAdapter: ChatAdapter
 
     override fun init() {
         EventBus.getDefault().register(this)
-        initData()
+
+        chatUserId = intent.getLongExtra(CHAT_USER_ID,0)
+        val user = mViewModel.initData(chatUserId)
+        mAdapter = ChatAdapter(user)
+        mViewModel.itemChangeEvent.observe(this,Observer {
+            mAdapter.notifyItemChanged(it ?: 0)
+        })
+
         initRecyclerView()
+
         setSendClickListener()
 
-    }
-
-    private fun initData(){
-        val userId = intent.getLongExtra(CHAT_USER_ID,0)
-        val id = MyApplication.mUser?.id as Long
-        user = (select from User::class
-                where (User_Table.id.eq(id)).and(User_Table.friendId.eq(userId)))
-            .querySingle() as User
-        mViewModel.mAdapter = ChatAdapter(user)
-        mViewModel.loadMore(user.friendId)
     }
 
     private fun initRecyclerView(){
         with(recycle_view_chat){
             layoutManager = LinearLayoutManager(this@ChatActivity,LinearLayoutManager.VERTICAL,true)
-            adapter = mViewModel.mAdapter
+            adapter = mAdapter
             addOnScrollListener(object : RecyclerScrollListener() {
                 override fun loadMore() {
-                    mViewModel.loadMore(user.friendId)
+                    mViewModel.loadMore(chatUserId)
                 }
             })
         }
@@ -56,7 +56,7 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
             if (txt == ""){
                 return@setOnClickListener
             }
-            val msg = IMMsg(0,MyApplication.mUser?.id as Long,user.friendId,Date(),txt, TYPE_MSG)
+            val msg = IMMsg(0,MyApplication.mUser?.id as Long,chatUserId,Date(),txt, TYPE_MSG)
             edit_msg.setText("")
             mViewModel.sendMsg(msg)
         }
@@ -78,8 +78,8 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
     }
 
     override fun onDestroy() {
-        //将消息发到.ui.main.message.MessageFragment,将MessageFragment的chatId设置为NONE
-        EventBus.getDefault().post(LatestChat(MessageFragment.NONE))
+        //将消息发到.ui.main.message.LatestChatFragment,将LatestChatFragment的chatId设置为NONE
+        EventBus.getDefault().post(LatestChat(LatestChatFragment.NONE))
         EventBus.getDefault().unregister(this)
         super.onDestroy()
     }

@@ -7,8 +7,8 @@ import javax.inject.Inject
 /**
  * Created by dnnt on 18-1-26.
  */
-const val IP = "192.168.1.226"
-//const val IP = "120.79.250.237"
+//const val IP = "192.168.1.226"
+const val IP = "120.79.250.237"
 const val PORT = "8443"
 const val BASE_URL = "https://$IP:$PORT/touch/"
 const val USER = "user"

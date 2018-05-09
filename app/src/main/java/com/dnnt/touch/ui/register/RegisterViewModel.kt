@@ -25,7 +25,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
     }
 
     @Inject lateinit var mNetService: NetService
-    @Inject lateinit var mScheduler: MyScheduler
+//    @Inject lateinit var mScheduler: MyScheduler
 
     val mVerificationEvent = SingleLiveEvent<Void>()
     val mNextStepEvent = SingleLiveEvent<String>()
@@ -66,7 +66,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
                 )
                 mLoading.value = true
                 mNetService.register(map,cookie)
-                        .delay(1000, TimeUnit.MILLISECONDS, mScheduler)
+//                        .delay(1000, TimeUnit.MILLISECONDS, mScheduler)
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
                         .subscribe({

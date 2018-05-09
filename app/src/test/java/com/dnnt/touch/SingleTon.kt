@@ -42,7 +42,7 @@ object SingleTon {
         val keyStoreType = KeyStore.getDefaultType()
         val keyStore = KeyStore.getInstance(keyStoreType)
         keyStore.load(null, null)
-        val caIS = FileInputStream("/home/dnnt/Projects/Touch/app/src/main/assets/tomcat_local.cer")
+        val caIS = FileInputStream(BuildConfig.JKS_FILE_PATH)
         val certificateFactory = CertificateFactory.getInstance("X.509")
         val ca = certificateFactory.generateCertificate(caIS)
         caIS.close()

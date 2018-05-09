@@ -44,28 +44,28 @@ abstract class BaseAdapter<T>(list: MutableList<T> = mutableListOf()) : Recycler
 
     abstract fun getLayoutId(): Int
 
-    fun setList(list: MutableList<T>?){
-        mList = list ?: mutableListOf()
+    fun setList(list: List<T>?){
+        mList = list as? MutableList ?: (list?.toMutableList() ?: mutableListOf())
         notifyDataSetChanged()
     }
 
-    fun insertAtLast(list: MutableList<T>){
-        val start = mList.size
-        mList.addAll(list)
-//        mList.addAll()
-        notifyItemRangeInserted(start,list.size)
-    }
-
-    fun insertAtFirst(list: MutableList<T>){
-        mList.addAll(0,list)
-        notifyItemRangeInserted(0,list.size)
-    }
-
-    fun insertAtFirst(item: T){
-        mList.add(0,item)
-        notifyDataSetChanged()
-//        notifyItemInserted(0)
-    }
+//    fun insertAtLast(list: List<T>){
+//        val start = mList.size
+//        mList.addAll(list)
+////        mList.addAll()
+//        notifyItemRangeInserted(start,list.size)
+//    }
+//
+//    fun insertAtFirst(list: List<T>){
+//        mList.addAll(0,list)
+//        notifyItemRangeInserted(0,list.size)
+//    }
+//
+//    fun insertAtFirst(item: T){
+//        mList.add(0,item)
+//        notifyDataSetChanged()
+////        notifyItemInserted(0)
+//    }
 
 
 }

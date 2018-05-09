@@ -4,18 +4,19 @@
     <data>
         <variable
             name="viewModel"
-            type="com.dnnt.touch.ui.main.MainViewModel" />
+            type="com.dnnt.touch.ui.main.message.LatestChatViewModel" />
     </data>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.dnnt.touch.ui.main.message.MessageFragment">
+        tools:context="com.dnnt.touch.ui.main.message.LatestChatFragment">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_message"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            items="@{viewModel.items}"/>
 
     </FrameLayout>
 </layout>

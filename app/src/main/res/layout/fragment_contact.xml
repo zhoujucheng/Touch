@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.dnnt.touch.ui.main.MainViewModel" />
+            type="com.dnnt.touch.ui.main.contact.ContactViewModel" />
     </data>
 
     <FrameLayout
@@ -14,7 +14,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view_contact"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
+            android:layout_height="match_parent"
+            items="@{viewModel.items}"/>
 
     </FrameLayout>
 </layout>

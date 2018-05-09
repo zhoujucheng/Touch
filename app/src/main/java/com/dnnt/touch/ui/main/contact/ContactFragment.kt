@@ -3,11 +3,13 @@ package com.dnnt.touch.ui.main.contact
 import android.arch.lifecycle.Observer
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.dnnt.touch.MyApplication
 
 import com.dnnt.touch.R
 import com.dnnt.touch.been.User
 import com.dnnt.touch.been.User_Table
+import com.dnnt.touch.ui.base.BaseAdapter
 import com.dnnt.touch.ui.base.BaseFragment
 import com.dnnt.touch.ui.main.MainViewModel
 import com.dnnt.touch.util.TYPE_HEAD_UPDATE
@@ -27,7 +29,7 @@ import kotlin.coroutines.experimental.buildSequence
 /**
  * A simple [Fragment] subclass.
  */
-class ContactFragment @Inject constructor(): BaseFragment<MainViewModel>() {
+class ContactFragment @Inject constructor(): BaseFragment<ContactViewModel>() {
 
     private val mAdapter = ContactAdapter()
 
@@ -36,15 +38,12 @@ class ContactFragment @Inject constructor(): BaseFragment<MainViewModel>() {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter
         }
-        val id = MyApplication.mUser?.id as Long
-        val list = (select from User::class where User_Table.id.eq(id)).list
-        mAdapter.setList(list)
-        if (list.size == 0){
-            mViewModel.loadUsers.observe(this, Observer {
-                mAdapter.setList(it?.toMutableList())
-            })
-            mViewModel.freshFriends(MyApplication.mToken)
-        }
+
+        mViewModel.itemChangeEvent.observe(this, Observer {
+            mAdapter.notifyItemChanged(it ?: 0)
+        })
+        mViewModel.initData()
+
         EventBus.getDefault().register(this)
     }
 
@@ -52,27 +51,14 @@ class ContactFragment @Inject constructor(): BaseFragment<MainViewModel>() {
     public fun addOrUpdateUser(user: User){
         when(user.id){
             //-1代表新加的好友
-            -1L -> {
-                user.id = MyApplication.mUser?.id ?: 0L
-                mAdapter.insertAtFirst(user)
-                user.async().insert()
-            }
-            TYPE_HEAD_UPDATE.toLong() -> {
-                mAdapter.mList.forEachIndexed { i, item ->
-                    if (item.friendId == user.friendId){
-                        item.headUrl = user.headUrl
-                        item.async().update()
-                        mAdapter.notifyItemChanged(i)
-                        return@forEachIndexed
-                    }
-                }
-            }
+            -1L -> mViewModel.addNewFriend(user)
+            TYPE_HEAD_UPDATE.toLong() -> mViewModel.updateHead(user)
         }
     }
 
     override fun getLayoutId() = R.layout.fragment_contact
 
-    @Inject override fun setViewModule(viewModel: MainViewModel) {
+    @Inject override fun setViewModule(viewModel: ContactViewModel) {
         mViewModel = viewModel
     }
 
@@ -80,5 +66,6 @@ class ContactFragment @Inject constructor(): BaseFragment<MainViewModel>() {
         EventBus.getDefault().unregister(this)
         super.onDestroy()
     }
+
 
 }

@@ -2,7 +2,7 @@ package com.dnnt.touch.ui.main
 
 import com.dnnt.touch.di.FragmentScoped
 import com.dnnt.touch.ui.main.contact.ContactFragment
-import com.dnnt.touch.ui.main.message.MessageFragment
+import com.dnnt.touch.ui.main.message.LatestChatFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -13,7 +13,7 @@ import dagger.android.ContributesAndroidInjector
 abstract class MainModule {
     @FragmentScoped
     @ContributesAndroidInjector
-    abstract fun messageFragment(): MessageFragment
+    abstract fun latestChatFragment(): LatestChatFragment
 
     @FragmentScoped
     @ContributesAndroidInjector

@@ -65,7 +65,7 @@ class LatestChatAdapter : BaseAdapter<LatestChat>(){
     }
 
     fun removeItem(item: LatestChat){
-        val k = mList.indexOfFirst { it.from == it.from }
+        val k = mList.indexOfFirst { it.from == item.from }
         if (k >= 0){
             mList.removeAt(k)
         }
@@ -75,7 +75,7 @@ class LatestChatAdapter : BaseAdapter<LatestChat>(){
     override fun getItemEvenHandler(): ItemEvenHandler<LatestChat> {
         return object : ItemEvenHandler<LatestChat> {
             override fun onItemClick(view: View, item: LatestChat) {
-                //将消息发到.ui.main.message.MessageFragment,将MessageFragment的chatId设置为对话用户的id
+                //将消息发到.ui.main.message.LatestChatFragment,将LatestChatFragment的chatId设置为对话用户的id
                 if (item.type == TYPE_MSG){
                     EventBus.getDefault().post(item)
                     val intent = Intent(view.context,ChatActivity::class.java)
