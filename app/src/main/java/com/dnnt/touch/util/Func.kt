@@ -72,6 +72,7 @@ fun getSSL():Pair<SSLContext,X509TrustManager>{
     val keyStoreType = KeyStore.getDefaultType()
     val keyStore = KeyStore.getInstance(keyStoreType)
     keyStore.load(null, null)
+//    val caIS = MyApplication.mContext.assets.open("tomcat_local.cer")
     val caIS = MyApplication.mContext.assets.open("tomcat_server.cer")
     val certificateFactory = CertificateFactory.getInstance("X.509")
     val ca = certificateFactory.generateCertificate(caIS)

@@ -2,18 +2,14 @@ package com.dnnt.touch.ui.login
 
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
-import android.text.TextUtils
 import com.dnnt.touch.ui.base.BaseViewModel
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
-import com.dnnt.touch.base.MyScheduler
 import com.dnnt.touch.base.SingleLiveEvent
-import com.dnnt.touch.been.User
 import com.dnnt.touch.di.ActivityScoped
 import com.dnnt.touch.network.NetService
 import com.dnnt.touch.util.*
 import io.reactivex.android.schedulers.AndroidSchedulers
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**

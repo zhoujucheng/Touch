@@ -19,8 +19,6 @@ import javax.inject.Inject
 class MyApplication: DaggerApplication() {
 
     companion object {
-//        lateinit var mExecutorService: ExecutorService private set
-//        lateinit var mScheduler: Scheduler private set
         lateinit var mOkHttpClient: OkHttpClient private set
         @SuppressLint("StaticFieldLeak")
         lateinit var mContext: Context private set
@@ -36,11 +34,6 @@ class MyApplication: DaggerApplication() {
     @Inject fun setContext(context: Context){
         mContext = context
     }
-
-//    @Inject
-//    fun setExecutorService(executorService: ExecutorService){
-//        mExecutorService = executorService
-//    }
 
     @Inject fun initCrashHandler(crashHandler: CrashHandler){}
 

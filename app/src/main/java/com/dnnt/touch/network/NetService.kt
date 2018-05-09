@@ -8,6 +8,7 @@ import com.dnnt.touch.util.PHONE
 import io.reactivex.Observable
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -50,4 +51,8 @@ interface NetService {
     @POST("user/changePassword")
     @FormUrlEncoded
     fun changePassword(@FieldMap map:Map<String,String>): Observable<Response<Json<Unit>>>
+
+    @POST("user/uploadErrFile")
+    @Multipart
+    fun uploadErrFile(@Part uploadFile: MultipartBody.Part): Call<Unit>
 }

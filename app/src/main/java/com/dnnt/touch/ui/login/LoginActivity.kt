@@ -10,9 +10,6 @@ import com.dnnt.touch.base.DialogObserver
 import com.dnnt.touch.util.*
 import javax.inject.Inject
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
 import java.util.*
 
 
@@ -55,6 +52,7 @@ class LoginActivity : BaseActivity<LoginViewModel>(){
             name_or_phone.setText(nameOrPhone)
             password.setText(getString(PASSWORD))
         }
+
     }
 
 

@@ -2,7 +2,6 @@ package com.dnnt.touch.base
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import com.dnnt.touch.util.logi
 
 /**
  * Created by dnnt on 18-4-7.

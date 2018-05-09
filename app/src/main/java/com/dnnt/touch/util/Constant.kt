@@ -46,6 +46,7 @@ const val PWD_MIN_LEN = 6
 const val CODE_TAG_REGISTER = 1
 const val CODE_TAG_RESET = 2
 const val CODE_TAG = "codeTag"
+const val CRASH_DIR = "crash"
 
 const val SPLIT_CHAR = ';'
 

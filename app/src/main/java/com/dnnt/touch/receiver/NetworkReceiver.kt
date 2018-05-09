@@ -31,9 +31,18 @@ class NetworkReceiver @Inject constructor() : BroadcastReceiver() {
     private val listeners: MutableList<NetworkChangeListener> = mutableListOf()
 
     override fun onReceive(context: Context, intent: Intent) {
+        netStatus = getNetStatus(context)
+        listeners.forEach { it.networkChanged(netStatus) }
+    }
+
+    @Inject fun initStatus(context: Context){
+        netStatus = getNetStatus(context)
+    }
+
+    private fun getNetStatus(context: Context): Int{
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
-        netStatus = if (networkInfo != null && networkInfo.isConnected){
+        return if (networkInfo != null && networkInfo.isConnected){
             if (MyApplication.mUser != null){
                 context.startService(Intent(context,NettyService::class.java))
             }
@@ -48,8 +57,6 @@ class NetworkReceiver @Inject constructor() : BroadcastReceiver() {
             }
             NO_NETWORK
         }
-
-        listeners.forEach { it.networkChanged(netStatus) }
     }
 
     fun addListener(listener: NetworkChangeListener) =

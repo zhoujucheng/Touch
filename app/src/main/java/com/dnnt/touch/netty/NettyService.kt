@@ -8,9 +8,7 @@ import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.util.IP
 import com.dnnt.touch.util.getSSL
 import com.dnnt.touch.util.logi
-import com.raizlabs.android.dbflow.kotlinextensions.async
 import io.netty.bootstrap.Bootstrap
-import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.ChannelOption
 import io.netty.channel.nio.NioEventLoopGroup

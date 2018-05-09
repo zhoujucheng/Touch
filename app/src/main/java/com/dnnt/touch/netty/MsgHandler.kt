@@ -1,16 +1,12 @@
 package com.dnnt.touch.netty
 
-import android.os.Handler
-import android.os.HandlerThread
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
-import com.dnnt.touch.been.User
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.util.*
 import com.raizlabs.android.dbflow.kotlinextensions.async
-import com.raizlabs.android.dbflow.kotlinextensions.save
 import io.netty.channel.ChannelDuplexHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.handler.timeout.IdleState
@@ -18,8 +14,6 @@ import io.netty.handler.timeout.IdleStateEvent
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import org.greenrobot.eventbus.EventBus
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 /**
@@ -114,10 +108,6 @@ class MsgHandler : ChannelDuplexHandler(){
     }
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
-//        if (msg !is ChatProto.ChatMsg){
-//            ctx.fireChannelRead(msg)
-//            return
-//        }
         msg as ChatProto.ChatMsg
         when (msg.type){
 

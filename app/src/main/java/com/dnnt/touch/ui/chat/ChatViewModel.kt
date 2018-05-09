@@ -2,16 +2,12 @@ package com.dnnt.touch.ui.chat
 
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableArrayList
-import android.databinding.ObservableInt
-import android.databinding.ObservableList
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.been.*
 import com.dnnt.touch.di.ActivityScoped
 import com.dnnt.touch.netty.MsgHandler
 import com.dnnt.touch.ui.base.BaseViewModel
-import com.dnnt.touch.util.CHAT_USER_ID
 import com.raizlabs.android.dbflow.kotlinextensions.*
-import java.util.*
 import javax.inject.Inject
 
 /**

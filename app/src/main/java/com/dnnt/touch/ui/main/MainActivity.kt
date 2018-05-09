@@ -2,23 +2,17 @@ package com.dnnt.touch.ui.main
 
 import android.Manifest
 import android.app.Activity
-import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
-import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.webkit.PermissionRequest
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -29,12 +23,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
-import com.dnnt.touch.been.LatestChat
 import com.dnnt.touch.been.User
-import com.dnnt.touch.been.User_Table
 import com.dnnt.touch.netty.MsgHandler
 import com.dnnt.touch.netty.NettyService
-import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.ui.base.BaseActivity
 import com.dnnt.touch.ui.changepassword.ChangePwdActivity
@@ -42,8 +33,6 @@ import com.dnnt.touch.ui.login.LoginActivity
 import com.dnnt.touch.ui.main.contact.ContactFragment
 import com.dnnt.touch.ui.main.message.LatestChatFragment
 import com.dnnt.touch.util.*
-import com.raizlabs.android.dbflow.kotlinextensions.*
-import com.raizlabs.android.dbflow.sql.language.From
 import dagger.Lazy
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.content_main.*
@@ -52,14 +41,7 @@ import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationItemSelectedListener {
@@ -86,14 +68,8 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         val pagerAdapter = MainPagerAdapter(supportFragmentManager,fragmentList)
         view_pager.adapter = pagerAdapter
 
-
-
         startService(Intent(this,NettyService::class.java))
 
-//        launch {
-//            delay(3000)
-//            stopService(Intent(MyApplication.mContext,NettyService::class.java))
-//        }
         debugOnly {
 //            (select from IMMsg::class).list.forEach {
 //                it.delete()
@@ -106,7 +82,7 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
 //            }
             launch(UI){
                 if (MyApplication.mUser != null){
-                    //TODO Have a better solutions?
+                    //TODO Have a better solutions?(user_head may not have init)
                     while (user_head == null)   delay(100)
                     Glide.with(this@MainActivity).load(BASE_URL + MyApplication.mUser?.headUrl).into(user_head)
                     user_name.text = MyApplication.mUser?.userName ?: ""
@@ -120,8 +96,6 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
                 }
             }
         }
-
-
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
