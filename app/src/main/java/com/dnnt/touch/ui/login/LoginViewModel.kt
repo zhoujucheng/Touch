@@ -24,9 +24,10 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
     val mLoading = MutableLiveData<Boolean>()
 
     fun login(nameOrPhone: String, password: String){
+//        mNetService.getTest("asdfasf").subscribe({},{_,_ -> })
         when {
-            nameOrPhone.length < NAME_MIN_LENGTH || nameOrPhone.length > NAME_MAX_LENGTH -> toast(R.string.name_or_phone_wrong)
-            password.length < PWD_MIN_LEN || password.length > PWD_MAX_LEN -> toast(R.string.wrong_password)
+            nameOrPhone.length !in NAME_MIN_LENGTH..NAME_MAX_LENGTH -> toast(R.string.name_or_phone_wrong)
+            password.length !in PWD_MIN_LEN..PWD_MAX_LEN -> toast(R.string.wrong_password)
             else -> {
                 val map = hashMapOf(Pair(NAME_OR_PHONE,nameOrPhone), Pair(PASSWORD,password))
                 mLoading.value = true
@@ -40,7 +41,8 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
                             MyApplication.mToken = it.msg
                             map[TOKEN] = it.msg
                             mLoginEvent.call()
-                            val editor = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE).edit()
+                            val sharedPre = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE)
+                            val editor = sharedPre.edit()
                             map.forEach {
                                 editor.putString(it.key,it.value)
                             }
@@ -51,7 +53,6 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
             }
         }
     }
-
 }
 
 

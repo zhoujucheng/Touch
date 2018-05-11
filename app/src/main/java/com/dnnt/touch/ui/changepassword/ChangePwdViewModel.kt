@@ -1,5 +1,6 @@
 package com.dnnt.touch.ui.changepassword
 
+import android.content.Context
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
 import com.dnnt.touch.network.NetService
@@ -19,14 +20,18 @@ class ChangePwdViewModel @Inject constructor() : BaseViewModel() {
 
     fun changePassword(oldPassword: String, newPassword: String, newPassword1: String){
         when{
-            oldPassword.length < PWD_MIN_LEN || oldPassword.length > PWD_MAX_LEN -> toast(R.string.wrong_password)
-            newPassword.length < PWD_MIN_LEN || newPassword.length > PWD_MAX_LEN -> toast(R.string.pwd_len_wrong)
+            oldPassword.length !in PWD_MIN_LEN..PWD_MAX_LEN -> toast(R.string.wrong_password)
+            newPassword.length !in PWD_MIN_LEN..PWD_MAX_LEN -> toast(R.string.pwd_len_wrong)
             newPassword != newPassword1 -> toast(R.string.password_not_equal)
             else -> {
                 val id = MyApplication.mUser?.id ?: 0
                 netService.changePassword(hashMapOf(Pair(ID,id.toString()), Pair(OLD_PASSWORD,oldPassword),
                     Pair(NEW_PASSWORD,newPassword)))
                     .subscribe({
+                        val editor = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE).edit()
+                        editor.remove(PASSWORD)
+                        editor.remove(TOKEN)
+                        editor.apply()
                         toast(R.string.change_password_success)
                     },{msg,_ ->
                         toast(msg)

@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.Toast
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 /**
  * Created by dnnt on 18-1-27.
@@ -13,23 +15,33 @@ import com.dnnt.touch.R
 
 
 fun toast(msg: String) {
-    Toast.makeText(MyApplication.mContext, msg, Toast.LENGTH_SHORT).show()
+    launch(UI) {
+        Toast.makeText(MyApplication.mContext, msg, Toast.LENGTH_SHORT).show()
+    }
 }
 
 fun toast(resId: Int){
-    Toast.makeText(MyApplication.mContext, resId, Toast.LENGTH_SHORT).show()
+    launch(UI) {
+        Toast.makeText(MyApplication.mContext, resId, Toast.LENGTH_SHORT).show()
+    }
 }
 
 fun toast(resId: Int,vararg strs: String){
-    Toast.makeText(MyApplication.mContext, String.format(getString(resId),*strs),Toast.LENGTH_SHORT).show()
+    launch(UI) {
+        Toast.makeText(MyApplication.mContext, String.format(getString(resId),*strs),Toast.LENGTH_SHORT).show()
+    }
 }
 
 fun toastLong(msg: String){
-    Toast.makeText(MyApplication.mContext, msg, Toast.LENGTH_LONG).show()
+    launch(UI) {
+        Toast.makeText(MyApplication.mContext, msg, Toast.LENGTH_LONG).show()
+    }
 }
 
 fun toastLong(resId: Int){
-    Toast.makeText(MyApplication.mContext, resId, Toast.LENGTH_LONG).show()
+    launch(UI) {
+        Toast.makeText(MyApplication.mContext, resId, Toast.LENGTH_LONG).show()
+    }
 }
 
 fun getProgressDialog(context: Context, title:String = "") =

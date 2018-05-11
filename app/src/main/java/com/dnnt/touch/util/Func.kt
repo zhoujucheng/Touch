@@ -2,20 +2,28 @@ package com.dnnt.touch.util
 
 import android.content.Context
 import android.text.TextUtils
+import com.dnnt.touch.BuildConfig
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
+import com.dnnt.touch.base.AlreadyInRequestException
 import com.dnnt.touch.base.NetworkNotAvailableException
 import com.dnnt.touch.been.Json
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
 import io.reactivex.Observable
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 import retrofit2.Response
+import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.security.KeyStore
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.net.ssl.*
 
 /**
@@ -53,9 +61,29 @@ fun handleNetThrowable(throwable: Throwable){
             val current = Thread.currentThread()
             current.uncaughtExceptionHandler.uncaughtException(current, throwable)
         }
-        else -> toast(R.string.unknown_error)
+        !is AlreadyInRequestException -> {
+            toast(R.string.unknown_error)
+        }
     }
     throwable.printStackTrace()
+}
+
+fun <T> saveRequestFail(response: Response<T>){
+    val code = response.raw().code()
+    val path = MyApplication.mContext.externalCacheDir.path + "/request_err"
+    File(path).mkdir()
+    val time = SimpleDateFormat("yyyy-MM-dd_HH:mm:ss.SSS").format(Date(System.currentTimeMillis()))
+    val file = File("$path/req_${code}_$time.html")
+    val ins = response.errorBody()?.byteStream()
+    val outs = file.outputStream()
+    launch(CommonPool) {
+        try {
+            ins?.copyTo(outs)
+        }finally {
+            ins?.close()
+            outs.close()
+        }
+    }
 }
 
 fun <T> handleRequestFail(response: Response<T>){
@@ -63,8 +91,10 @@ fun <T> handleRequestFail(response: Response<T>){
     if (!TextUtils.isEmpty(response.message())) {
         msg = response.message()
     }
-    msg = response.raw().code().toString() + " " + msg
-    toast(msg)
+    if (BuildConfig.DEBUG){
+        saveRequestFail(response)
+    }
+    toast("${response.code()} $msg")
 }
 
 
@@ -85,7 +115,4 @@ fun getSSL():Pair<SSLContext,X509TrustManager>{
     val sslContext = SSLContext.getInstance("TLS")
     sslContext.init(null, tms, null)
     return Pair(sslContext,tms[0] as X509TrustManager)
-}
-
-fun test(){
 }
