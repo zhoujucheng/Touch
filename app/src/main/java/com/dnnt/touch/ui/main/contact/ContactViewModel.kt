@@ -72,6 +72,16 @@ class ContactViewModel @Inject constructor() : BaseViewModel() {
             }
         }
     }
+    fun updateUserName(user: User){
+        items.forEachIndexed { i, item ->
+            if (item.friendId == user.friendId){
+                item.userName = user.userName
+                item.async().update()
+                itemChangeEvent.value = i
+                return
+            }
+        }
+    }
 
 
 

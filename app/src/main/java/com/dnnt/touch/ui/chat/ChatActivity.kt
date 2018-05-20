@@ -25,24 +25,20 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
 
 
     override fun init() {
-
-
         EventBus.getDefault().register(this)
         chatUserId = intent.getLongExtra(CHAT_USER_ID,0)
-
         refresh()
-
     }
 
     private fun refresh(){
+        //将消息发到.ui.main.message.LatestChatFragment,将LatestChatFragment的chatId设置为对话用户的id
+        EventBus.getDefault().post(LatestChat(chatUserId))
         val user = mViewModel.initData(chatUserId)
         mAdapter = ChatAdapter(user)
         mViewModel.itemChangeEvent.observe(this,Observer {
             mAdapter.notifyItemChanged(it ?: 0)
         })
-
         initRecyclerView()
-
         setSendClickListener()
     }
 
@@ -103,8 +99,6 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
         super.onNewIntent(intent)
         logi("onNewIntent","invoke")
         chatUserId = intent?.getLongExtra(CHAT_USER_ID,0L) ?: 0L
-        //将消息发到.ui.main.message.LatestChatFragment,将LatestChatFragment的chatId设置为对话用户的id
-        EventBus.getDefault().post(LatestChat(chatUserId))
         mViewModel.clear()
         refresh()
     }

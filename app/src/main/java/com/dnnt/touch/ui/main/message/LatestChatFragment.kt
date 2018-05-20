@@ -77,6 +77,7 @@ class LatestChatFragment @Inject constructor() : BaseFragment<LatestChatViewMode
             TYPE_FRIEND_AGREE -> mViewModel.handleFriendAgree(chatMsg)
             TYPE_OVERTIME -> toast(R.string.add_friend_over_time,chatMsg.msg)
             TYPE_HEAD_UPDATE -> mViewModel.handleHeadUpdate(chatMsg)
+            TYPE_UPDATE_USER_NAME -> mViewModel.handleUserNameUpdate(chatMsg)
             else -> {
                 if (type and TYPE_ACK != 0){
                     mViewModel.handleAck(type xor TYPE_ACK,chatMsg)

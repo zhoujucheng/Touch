@@ -122,13 +122,26 @@ class LatestChatViewModel @Inject constructor() : BaseViewModel(){
         EventBus.getDefault().post(user)
         items.forEachIndexed { i, item ->
             if (item.from == chatMsg.from){
-                item.async().save()
                 item.headUrl = chatMsg.msg
+                item.async().save()
                 itemChangeEvent.value = i
                 return
             }
         }
+    }
 
+    fun handleUserNameUpdate(chatMsg: ChatProto.ChatMsg){
+        val user = User(chatMsg.type.toLong(),chatMsg.from,userName = chatMsg.msg)
+        //将消息送到.ui.main.ContactFragment
+        EventBus.getDefault().post(user)
+        items.forEachIndexed { i,item ->
+            if (item.from == chatMsg.from){
+                item.nickname = item.nickname
+                item.async().save()
+                itemChangeEvent.value = i
+                return
+            }
+        }
     }
 
     private fun getNameAndUrl(msg: String): Pair<String,String>{

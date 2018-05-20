@@ -55,4 +55,8 @@ interface NetService {
     @POST("user/uploadErrFile")
     @Multipart
     fun uploadErrFile(@Part uploadFile: MultipartBody.Part): Call<Unit>
+
+    @POST("user/updateUserName")
+    @FormUrlEncoded
+    fun updateUserName(@Field("newName") newName: String, @Field("token") token: String): Observable<Response<Json<Unit>>>
 }

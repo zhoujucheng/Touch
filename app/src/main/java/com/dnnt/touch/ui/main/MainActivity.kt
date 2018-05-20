@@ -2,6 +2,7 @@ package com.dnnt.touch.ui.main
 
 import android.Manifest
 import android.app.Activity
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -37,7 +38,7 @@ import com.dnnt.touch.util.*
 import dagger.Lazy
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.dialog_add_friend.view.*
+import kotlinx.android.synthetic.main.dialog_text_btn.view.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.delay
@@ -73,12 +74,19 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         val pagerAdapter = MainPagerAdapter(supportFragmentManager,fragmentList)
         view_pager.adapter = pagerAdapter
 
+        mViewModel.userNameLiveData.observe(this, Observer {
+            user_name.text = it ?: ""
+        })
+
         launch(UI){
             if (MyApplication.mUser != null){
-                //TODO Have a better solutions?(user_head may not have init)
+                //TODO Have a better solutions(user_head may not have init)?
                 while (user_head == null)   delay(100)
                 Glide.with(this@MainActivity).load(BASE_URL + MyApplication.mUser?.headUrl).into(user_head)
-                user_name.text = MyApplication.mUser?.userName ?: ""
+                mViewModel.userNameLiveData.value = MyApplication.mUser?.userName
+                user_name.setOnClickListener {
+                    handleChangeUserName()
+                }
                 user_head.setOnClickListener{
                     if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                         openAlbum()
@@ -182,7 +190,6 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         when (item.itemId) {
             R.id.add_friend -> handleAddFriend()
             R.id.change_password -> {
-//                startActivityForResult(Intent(this,ChangePwdActivity::class.java), ACTIVITY_CHANGE_PWD_REQ)
                 startActivity(ChangePwdActivity::class.java)
             }
             R.id.log_out -> {
@@ -198,17 +205,36 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         return true
     }
 
+    fun handleChangeUserName(){
+        val view = View.inflate(this,R.layout.dialog_text_btn,null)
+        with(view){
+            dialog_text.setHint(R.string.user_name)
+            dialog_btn.setText(R.string.change_user_name)
+            dialog_btn.setOnClickListener {
+                val userName = dialog_text.text.toString()
 
+                if (!isNameLegal(userName)){
+                    toast(R.string.user_name_hint)
+                    return@setOnClickListener
+                }
+                mViewModel.updateUserName(userName)
+            }
+        }
 
-    private fun handleAddFriend(){
-        val view = View.inflate(this,R.layout.dialog_add_friend,null)
         AlertDialog.Builder(this)
             .setView(view)
             .create()
             .show()
+    }
+
+
+    private fun handleAddFriend(){
+        val view = View.inflate(this,R.layout.dialog_text_btn,null)
         with(view){
-            btn_add_friend.setOnClickListener {
-                val nameOrPhone = name_or_phone.text.toString()
+            dialog_text.setHint(R.string.name_or_phone)
+            dialog_btn.setText(R.string.add_friend)
+            dialog_btn.setOnClickListener {
+                val nameOrPhone = dialog_text.text.toString()
                 when {
                     isNameLegal(nameOrPhone) || nameOrPhone.matches(Regex("\\d{11}")) -> {
                         val user = MyApplication.mUser as User
@@ -223,6 +249,11 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
                 }
             }
         }
+
+        AlertDialog.Builder(this)
+            .setView(view)
+            .create()
+            .show()
     }
 
 

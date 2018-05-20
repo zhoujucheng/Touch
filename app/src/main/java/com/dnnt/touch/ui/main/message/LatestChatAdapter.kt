@@ -75,9 +75,7 @@ class LatestChatAdapter : BaseAdapter<LatestChat>(){
     override fun getItemEvenHandler(): ItemEvenHandler<LatestChat> {
         return object : ItemEvenHandler<LatestChat> {
             override fun onItemClick(view: View, item: LatestChat) {
-                //将消息发到.ui.main.message.LatestChatFragment,将LatestChatFragment的chatId设置为对话用户的id
                 if (item.type == TYPE_MSG){
-                    EventBus.getDefault().post(item)
                     val intent = Intent(view.context,ChatActivity::class.java)
                     intent.putExtra(CHAT_USER_ID,item.from)
                     view.context.startActivity(intent)

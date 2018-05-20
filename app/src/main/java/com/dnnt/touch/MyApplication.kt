@@ -26,6 +26,7 @@ class MyApplication: DaggerApplication() {
         lateinit var mOkHttpClient: OkHttpClient private set
         @SuppressLint("StaticFieldLeak")
         lateinit var mContext: Context private set
+        //此处mUser.friendId 代表与之对话的用户ID
         var mUser: User? = null
         lateinit var mToken: String
         private var count = 0

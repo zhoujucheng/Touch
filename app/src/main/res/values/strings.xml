@@ -79,4 +79,7 @@
     <string name="notification_msg_name">消息通知</string>
     <string name="friend_agree">该用户同意了你的申请</string>
     <string name="other_login_tip">你的帐号已在别处登录!</string>
+
+    <string name="change_user_name">修改用户名</string>
+    <string name="change_name_success">修改用户名功</string>
 </resources>

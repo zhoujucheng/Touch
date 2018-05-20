@@ -185,8 +185,8 @@ class MsgHandler : ChannelDuplexHandler(){
                 val temp = map.remove(msg.seq)
                 launch(UI) { toast(R.string.friend_already_add,temp?.msg ?: "") }
             }
-        //将消息送到.ui.main.message.LatestChatFragment
-            TYPE_HEAD_UPDATE -> EventBus.getDefault().post(msg)
+            //将消息送到.ui.main.message.LatestChatFragment
+            TYPE_HEAD_UPDATE, TYPE_UPDATE_USER_NAME -> EventBus.getDefault().post(msg)
             TYPE_SEND_FAIL ->{
                 val temp = map.remove(msg.seq)
                 if (temp != null){
@@ -211,9 +211,9 @@ class MsgHandler : ChannelDuplexHandler(){
         NettyService.terminate()
         removeSensitiveInfo(MyApplication.mContext)
         val context = MyApplication.mContext
+        toastLong(R.string.other_login_tip)
         context.startActivity(Intent(context,LoginActivity::class.java))
         finishAllActivity()
-        toastLong(R.string.other_login_tip)
     }
 
 

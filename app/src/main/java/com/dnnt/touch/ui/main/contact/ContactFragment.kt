@@ -13,6 +13,7 @@ import com.dnnt.touch.ui.base.BaseAdapter
 import com.dnnt.touch.ui.base.BaseFragment
 import com.dnnt.touch.ui.main.MainViewModel
 import com.dnnt.touch.util.TYPE_HEAD_UPDATE
+import com.dnnt.touch.util.TYPE_UPDATE_USER_NAME
 import com.dnnt.touch.util.USER_NAME
 import com.dnnt.touch.util.debugOnly
 import com.raizlabs.android.dbflow.kotlinextensions.*
@@ -49,10 +50,11 @@ class ContactFragment @Inject constructor(): BaseFragment<ContactViewModel>() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public fun addOrUpdateUser(user: User){
-        when(user.id){
+        when(user.id.toInt()){
             //-1代表新加的好友
-            -1L -> mViewModel.addNewFriend(user)
-            TYPE_HEAD_UPDATE.toLong() -> mViewModel.updateHead(user)
+            -1 -> mViewModel.addNewFriend(user)
+            TYPE_HEAD_UPDATE -> mViewModel.updateHead(user)
+            TYPE_UPDATE_USER_NAME -> mViewModel.updateUserName(user)
         }
     }
 
