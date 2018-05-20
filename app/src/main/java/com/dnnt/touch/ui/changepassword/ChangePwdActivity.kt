@@ -6,6 +6,7 @@ import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
 import com.dnnt.touch.ui.base.BaseActivity
 import com.dnnt.touch.ui.login.LoginActivity
+import com.dnnt.touch.util.finishAllActivity
 import com.dnnt.touch.util.loge
 import com.dnnt.touch.util.logi
 import kotlinx.android.synthetic.main.activity_change_pwd.*
@@ -17,10 +18,7 @@ class ChangePwdActivity : BaseActivity<ChangePwdViewModel>() {
     override fun init() {
         mViewModel.successEven.observe(this, Observer {
             startActivity(LoginActivity::class.java)
-            val list = MyApplication.activityList
-            for (i in list.size-1 downTo 0){
-                list[i].finish()
-            }
+            finishAllActivity()
         })
         complete.setOnClickListener {
             mViewModel.changePassword(oldPassword.text.toString(),password.text.toString(),password1.text.toString())

@@ -77,12 +77,14 @@ class AppModule {
                         throw AlreadyInRequestException()
                     }else{
                         set.add(url)
-                        val response = chain.proceed(chain.request())
-                        set.remove(url)
-                        return response
+                        try {
+                            return chain.proceed(chain.request())
+                        }finally {
+                            set.remove(url)
+                        }
+
                     }
                 }
-
             })
             .dispatcher(Dispatcher(executorService))
             .sslSocketFactory(pair.first.socketFactory,pair.second)

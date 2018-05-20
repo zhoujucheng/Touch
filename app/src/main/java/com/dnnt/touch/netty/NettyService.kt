@@ -25,19 +25,30 @@ import java.net.InetSocketAddress
 class NettyService : Service() {
     companion object {
         val TAG = "NettyService"
+
+        @Volatile
+        private var running = true
+
+        fun terminate(){
+            running = false
+            MsgHandler.close()
+        }
     }
+
     private val mBinder = NettyBinder()
 
-    @Volatile
-    private var running = true
-
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-       Thread{
-           while (running){
-               logi(TAG,"start netty service")
-               startNetty()
-           }
+        running = true
+        Thread{
+            while (running){
+                logi(TAG,"start netty service")
+                try {
+                    startNetty()
+                    Thread.sleep(300)
+                }catch (e: Exception){
+                    e.printStackTrace()
+                }
+            }
         }.start()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -84,13 +95,8 @@ class NettyService : Service() {
 
     override fun onDestroy() {
         logi(TAG,"onDestroy")
-        super.onDestroy()
         terminate()
-    }
-
-    private fun terminate(){
-        running = false
-        MsgHandler.close()
+        super.onDestroy()
     }
 
     class NettyBinder : Binder()

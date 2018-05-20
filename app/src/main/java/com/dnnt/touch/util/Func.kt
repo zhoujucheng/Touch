@@ -54,18 +54,22 @@ fun <T : Json<U>,U> Observable<Response<T>>.subscribe(onSuccess: (T) -> Unit, on
     subscribe(onSuccess, onFailure, {}, {})
 
 fun handleNetThrowable(throwable: Throwable){
+    logi("Func.kt","handleNetThrowable,${throwable.javaClass.name}")
     when (throwable) {
         is NetworkNotAvailableException -> toast(R.string.network_not_available)
-        is IOException, is HttpException -> toast(R.string.network_error)
+        is IOException, is HttpException -> {
+            toast(R.string.network_error)
+            throwable.printStackTrace()
+        }
         is RuntimeException -> {
             val current = Thread.currentThread()
             current.uncaughtExceptionHandler.uncaughtException(current, throwable)
         }
         !is AlreadyInRequestException -> {
             toast(R.string.unknown_error)
+            throwable.printStackTrace()
         }
     }
-    throwable.printStackTrace()
 }
 
 fun <T> saveRequestFail(response: Response<T>){
@@ -102,8 +106,8 @@ fun getSSL():Pair<SSLContext,X509TrustManager>{
     val keyStoreType = KeyStore.getDefaultType()
     val keyStore = KeyStore.getInstance(keyStoreType)
     keyStore.load(null, null)
-//    val caIS = MyApplication.mContext.assets.open("tomcat_local.cer")
-    val caIS = MyApplication.mContext.assets.open("tomcat_server.cer")
+    val caIS = MyApplication.mContext.assets.open("tomcat_local.cer")
+//    val caIS = MyApplication.mContext.assets.open("tomcat_server.cer")
     val certificateFactory = CertificateFactory.getInstance("X.509")
     val ca = certificateFactory.generateCertificate(caIS)
     caIS.close()
@@ -115,4 +119,23 @@ fun getSSL():Pair<SSLContext,X509TrustManager>{
     val sslContext = SSLContext.getInstance("TLS")
     sslContext.init(null, tms, null)
     return Pair(sslContext,tms[0] as X509TrustManager)
+}
+
+fun removeSensitiveInfo(context: Context){
+    val editor = context.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE).edit()
+    editor.remove(PASSWORD)
+    editor.remove(TOKEN)
+    editor.remove(ID)
+    editor.apply()
+    launch(UI) {
+        MyApplication.mUser = null
+        MyApplication.mToken = ""
+    }
+}
+
+fun finishAllActivity(){
+    val list = MyApplication.activityList
+    for (i in list.size-1 downTo 0){
+        list[i].finish()
+    }
 }

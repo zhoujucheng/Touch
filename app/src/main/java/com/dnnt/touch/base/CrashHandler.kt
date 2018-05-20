@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Process
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.network.NetService
+import com.dnnt.touch.receiver.NetworkReceiver
 import com.dnnt.touch.util.CRASH_DIR
 import com.dnnt.touch.util.loge
 import kotlinx.coroutines.experimental.CommonPool
@@ -75,7 +76,9 @@ class CrashHandler @Inject constructor(context: Context): Thread.UncaughtExcepti
         runBlocking {
             val l = launch(CommonPool) {
                 //I don't care if it is successful or not
-                mNetService.uploadErrFile(filePart).execute()
+                if (NetworkReceiver.isNetUsable()){
+                    mNetService.uploadErrFile(filePart).execute()
+                }
             }
             l.join()
         }

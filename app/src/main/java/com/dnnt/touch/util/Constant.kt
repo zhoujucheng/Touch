@@ -7,8 +7,8 @@ import javax.inject.Inject
 /**
  * Created by dnnt on 18-1-26.
  */
-//const val IP = "192.168.1.226"
-const val IP = "120.79.250.237"
+const val IP = "192.168.1.226"
+//const val IP = "120.79.250.237"
 const val PORT = "8443"
 const val BASE_URL = "https://$IP:$PORT/touch/"
 const val USER = "user"
@@ -37,7 +37,9 @@ const val TYPE_USER_NOT_EXIST = 0x20
 const val TYPE_USER_ALREADY_ADD = 0x40
 const val TYPE_HEAD_UPDATE = 0X80
 const val TYPE_SEND_FAIL = 0x100
-const val TYPE_OVERTIME = 0x200
+const val TYPE_TOKEN_WRONG = 0x200
+const val TYPE_OVERTIME = 0x400
+const val TYPE_OTHER_LOGIN = 0x800
 
 const val NAME_MIN_LENGTH = 4
 const val NAME_MAX_LENGTH = 16
@@ -52,7 +54,6 @@ const val CRASH_DIR = "crash"
 const val SPLIT_CHAR = ';'
 
 const val ACTIVITY_SET_HEAD_REQ = 1
-const val ACTIVITY_CHANGE_PWD_REQ = 2
 
 const val READ_EXTERNAL_STORAGE = 1
 

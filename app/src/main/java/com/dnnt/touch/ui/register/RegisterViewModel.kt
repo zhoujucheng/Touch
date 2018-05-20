@@ -106,11 +106,7 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
                     Pair(VERIFICATION_CODE,code))
                 mNetService.resetPassword(map,cookie)
                     .subscribe({
-                        val editor = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE).edit()
-                        editor.remove(PASSWORD)
-                        editor.remove(TOKEN)
-                        editor.remove(ID)
-                        editor.apply()
+                        removeSensitiveInfo(MyApplication.mContext)
                         toast(R.string.reset_password_success)
                     },{msg,_ ->
                         toast(msg)

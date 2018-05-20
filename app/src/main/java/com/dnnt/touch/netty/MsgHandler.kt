@@ -2,12 +2,14 @@ package com.dnnt.touch.netty
 
 import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
 import com.dnnt.touch.protobuf.ChatProto
 import com.dnnt.touch.receiver.NetworkReceiver
+import com.dnnt.touch.ui.login.LoginActivity
 import com.dnnt.touch.util.*
 import com.raizlabs.android.dbflow.kotlinextensions.async
 import io.netty.channel.ChannelDuplexHandler
@@ -48,7 +50,7 @@ class MsgHandler : ChannelDuplexHandler(){
                 ctx?.writeAndFlush(chatMsg)
                 map[i] = msg
                 logi(TAG, "seq = $i")
-                map.forEach { t, u ->
+                for((t,u) in map){
                     logi(TAG,"send,map[$t]: type = ${u.type}, seq = ${u.seq}, msg = ${u.msg}")
                 }
             }
@@ -63,7 +65,7 @@ class MsgHandler : ChannelDuplexHandler(){
             },10000,TimeUnit.MILLISECONDS)
         }
 
-        fun handleFailure(temp: IMMsg){
+        private fun handleFailure(temp: IMMsg){
             if (temp.type == TYPE_MSG){
                 temp.type = TYPE_SEND_FAIL
                 handleIMMsg(temp)
@@ -100,20 +102,28 @@ class MsgHandler : ChannelDuplexHandler(){
         }
 
         fun close(){
-            ctx?.close()
-            ctx = null
+            ctx?.let {
+                if (!(it.executor().isShutdown || it.executor().isTerminated)){
+                    it.close()
+                    ctx = null
+                }
+            }
+
         }
     }
 
     override fun channelActive(ctx: ChannelHandlerContext) {
         logi(TAG,"channelActive")
         MsgHandler.ctx = ctx
-        ctx.writeAndFlush(
-            ChatProto.ChatMsg.newBuilder()
-                .setFrom(MyApplication.mUser?.id as Long)
-                .setMsg(MyApplication.mToken)
-                .setType(TYPE_CONNECTED)
-                .build())
+        MyApplication.mUser?.let {
+            ctx.writeAndFlush(
+                ChatProto.ChatMsg.newBuilder()
+                    .setFrom(it.id)
+                    .setMsg(MyApplication.mToken)
+                    .setType(TYPE_CONNECTED)
+                    .build())
+        }
+
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext?) {
@@ -131,7 +141,7 @@ class MsgHandler : ChannelDuplexHandler(){
 
             }
             TYPE_ACK -> {   //仅代表服务器收到了消息，对方有一定概率没收到消息
-                map.forEach { t, u ->
+                for ((t,u) in map){
                     logi(TAG,"ACK, map[$t]: type = ${u.type}, seq = ${u.seq}, msg = ${u.msg}")
                 }
                 val temp = map.remove(msg.seq)
@@ -184,9 +194,27 @@ class MsgHandler : ChannelDuplexHandler(){
                     handleIMMsg(temp)
                 }
             }
+            TYPE_TOKEN_WRONG -> {
+                logi(TAG,"wrong token")
+                handleWrongToken()
+            }
+            TYPE_OTHER_LOGIN -> {
+                NettyService.terminate()
+                val context = MyApplication.mContext
+                context.startActivity(Intent(context,LoginActivity::class.java))
+                finishAllActivity()
+            }
         }
     }
 
+    private fun handleWrongToken(){
+        NettyService.terminate()
+        removeSensitiveInfo(MyApplication.mContext)
+        val context = MyApplication.mContext
+        context.startActivity(Intent(context,LoginActivity::class.java))
+        finishAllActivity()
+        toastLong(R.string.other_login_tip)
+    }
 
 
     override fun userEventTriggered(ctx: ChannelHandlerContext?, evt: Any?) {

@@ -9,6 +9,7 @@ import com.dnnt.touch.netty.NettyService
 import com.dnnt.touch.util.MOBILE_DATA
 import com.dnnt.touch.util.NO_NETWORK
 import com.dnnt.touch.util.WIFI
+import com.dnnt.touch.util.logi
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -57,8 +58,10 @@ class NetworkReceiver @Inject constructor() : BroadcastReceiver() {
     fun addListener(listener: NetworkChangeListener) =
         listeners.add(listener)
 
-    fun removeListener(listener: NetworkChangeListener) =
+    fun removeListener(listener: NetworkChangeListener){
         listeners.remove(listener)
+        logi("remove listener","remove")
+    }
 
     interface NetworkChangeListener{
         fun networkChanged(status: Int)

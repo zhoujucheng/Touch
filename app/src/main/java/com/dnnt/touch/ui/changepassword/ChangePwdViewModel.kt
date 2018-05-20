@@ -33,11 +33,7 @@ class ChangePwdViewModel @Inject constructor() : BaseViewModel() {
                     Pair(NEW_PASSWORD,newPassword)))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        val editor = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE).edit()
-                        editor.remove(PASSWORD)
-                        editor.remove(TOKEN)
-                        editor.remove(ID)
-                        editor.apply()
+                        removeSensitiveInfo(MyApplication.mContext)
                         toast(R.string.change_password_success)
                         successEven.call()
                     },{msg,_ ->

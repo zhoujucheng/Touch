@@ -171,10 +171,10 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
     }
 
     override fun onDestroy() {
-        logi(TAG,"onDestroya")
+        logi(TAG,"onDestroy")
         stopService(Intent(this,NettyService::class.java))
-        super.onDestroy()
         networkReceiver.removeListener(netChangeListener)
+        super.onDestroy()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
