@@ -36,18 +36,19 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
     private var cookie = ""
 
     fun getVerificationCode(phone: String,codeTag: Int){
-        if(phone.length != 11){
-            toast("手机格式错误！")
-            return
-        }
         mNetService.getVerificationCode(phone,codeTag)
-                .observeOn(AndroidSchedulers.mainThread())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
                 if (it.isSuccessful){
                     if (it.body()?.successful == true){
                         logi(TAG,it.headers().get("Set-Cookie"))
                         cookie = it.headers().get("Set-Cookie")?.split(";")?.get(0) ?: ""
                         toast(R.string.send_success)
+                    }else{
+                        val msg = it.body()?.msg
+                        msg?.let {
+                            toast(it)
+                        }
                     }
                 }else{
                     handleRequestFail(it)
@@ -108,8 +109,9 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
                         val editor = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE).edit()
                         editor.remove(PASSWORD)
                         editor.remove(TOKEN)
+                        editor.remove(ID)
                         editor.apply()
-                        toast(R.string.change_password_success)
+                        toast(R.string.reset_password_success)
                     },{msg,_ ->
                         toast(msg)
                     })

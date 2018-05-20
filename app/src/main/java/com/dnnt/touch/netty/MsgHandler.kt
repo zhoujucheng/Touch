@@ -1,5 +1,8 @@
 package com.dnnt.touch.netty
 
+import android.app.NotificationManager
+import android.content.Context
+import android.support.v4.app.NotificationCompat
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
 import com.dnnt.touch.been.IMMsg
@@ -23,16 +26,18 @@ class MsgHandler : ChannelDuplexHandler(){
 
     companion object {
         const val TAG = "MsgHandler"
-        lateinit var ctx: ChannelHandlerContext
+        private var ctx: ChannelHandlerContext? = null
         private val map = hashMapOf<Int,IMMsg>()
         private var seq = 1 //消息序列
         fun sendMsg(msg: IMMsg){
             val i = seq++
-            if (!NetworkReceiver.isNetUsable() || ctx.executor().isShutdown || ctx.executor().isTerminated){
+            msg.seq = i
+            if (!NetworkReceiver.isNetUsable() || ctx == null){
+                handleFailure(msg)
+                toast(R.string.network_not_available)
                 return
             }
-            msg.seq = i
-            ctx.executor().execute{
+            ctx?.executor()?.execute{
                 val chatMsg = ChatProto.ChatMsg.newBuilder()
                     .setFrom(msg.from)
                     .setTo(msg.to)
@@ -40,7 +45,7 @@ class MsgHandler : ChannelDuplexHandler(){
                     .setType(msg.type)
                     .setSeq(i)
                     .build()
-                ctx.writeAndFlush(chatMsg)
+                ctx?.writeAndFlush(chatMsg)
                 map[i] = msg
                 logi(TAG, "seq = $i")
                 map.forEach { t, u ->
@@ -49,33 +54,37 @@ class MsgHandler : ChannelDuplexHandler(){
             }
 
             //定时器，超时移除
-            ctx.executor().schedule({
+            ctx?.executor()?.schedule({
                 val temp = map[i]
                 if (temp != null){
                     map.remove(i)
-                    if (temp.type == TYPE_MSG){
-                        temp.type = TYPE_SEND_FAIL
-                        handleIMMsg(temp)
-                    }else if (temp.type == TYPE_ADD_FRIEND){
-                        //将消息送到.ui.main.message.LatestChatFragment
-                        EventBus.getDefault().post(ChatProto.ChatMsg.newBuilder()
-                            .setType(TYPE_OVERTIME)
-                            .setMsg(temp.msg)
-                            .build())
-                    }
+                    handleFailure(temp)
                 }
             },10000,TimeUnit.MILLISECONDS)
         }
 
-        fun sendACK(from: Long,seq: Int, time: Long){
-            if (!NetworkReceiver.isNetUsable() || ctx.executor().isShutdown || ctx.executor().isTerminated){
+        fun handleFailure(temp: IMMsg){
+            if (temp.type == TYPE_MSG){
+                temp.type = TYPE_SEND_FAIL
+                handleIMMsg(temp)
+            }else if (temp.type == TYPE_ADD_FRIEND){
+                //将消息送到.ui.main.message.LatestChatFragment
+                EventBus.getDefault().post(ChatProto.ChatMsg.newBuilder()
+                    .setType(TYPE_OVERTIME)
+                    .setMsg(temp.msg)
+                    .build())
+            }
+        }
+
+        fun sendACK(from: Long,seq: Int, to: Long){
+            if (!NetworkReceiver.isNetUsable()){
                 return
             }
-            ctx.executor().execute{
-                ctx.writeAndFlush(ChatProto.ChatMsg.newBuilder()
+            ctx?.executor()?.execute{
+                ctx?.writeAndFlush(ChatProto.ChatMsg.newBuilder()
                     .setType(TYPE_ACK)
                     .setFrom(from)
-                    .setTime(time)
+                    .setTo(to)
                     .setSeq(seq)
                     .build())
             }
@@ -88,6 +97,11 @@ class MsgHandler : ChannelDuplexHandler(){
             }else{
                 temp.async().save()
             }
+        }
+
+        fun close(){
+            ctx?.close()
+            ctx = null
         }
     }
 
@@ -110,11 +124,11 @@ class MsgHandler : ChannelDuplexHandler(){
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
         msg as ChatProto.ChatMsg
         when (msg.type){
-
             TYPE_MSG, TYPE_ADD_FRIEND, TYPE_FRIEND_AGREE -> {
                 //将消息送到.ui.main.message.LatestChatFragment
                 EventBus.getDefault().post(msg)
-                MsgHandler.sendACK(msg.from,msg.seq,msg.time)
+                MsgHandler.sendACK(msg.from,msg.seq,msg.to)
+
             }
             TYPE_ACK -> {   //仅代表服务器收到了消息，对方有一定概率没收到消息
                 map.forEach { t, u ->
@@ -186,6 +200,5 @@ class MsgHandler : ChannelDuplexHandler(){
             super.userEventTriggered(ctx, evt)
         }
     }
-
 
 }

@@ -1,6 +1,9 @@
 package com.dnnt.touch.ui.main.message
 
 
+import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationManager
 import android.support.v7.widget.LinearLayoutManager
 import com.dnnt.touch.MyApplication
 
@@ -19,7 +22,6 @@ import kotlinx.android.synthetic.main.fragment_message.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 import javax.inject.Inject
 import android.arch.lifecycle.Observer
 
@@ -31,8 +33,6 @@ class LatestChatFragment @Inject constructor() : BaseFragment<LatestChatViewMode
         val NONE = -1L
     }
 
-    //记录与该用户对话的用户的id,NONE代表没有与之对话的用户，若不为NONE则当前的可视页面应为ChatActivity
-    private var chatId: Long = NONE
 
     private val mAdapter = LatestChatAdapter()
 
@@ -58,10 +58,13 @@ class LatestChatFragment @Inject constructor() : BaseFragment<LatestChatViewMode
     fun onChatIdChange(latestChat: LatestChat){
         //进入ChatActivity时，将chatId设置为对话用户的id
         //退出ChatActivity时,将chatId设置为NONE
-        chatId = latestChat.from
+        val chatId = latestChat.from
+        mViewModel.chatId = chatId
         MyApplication.mUser?.friendId = chatId
         if (chatId == NONE){
             EventBus.getDefault().removeAllStickyEvents()
+        }else{
+            mViewModel.clearNum()
         }
     }
 
@@ -69,7 +72,7 @@ class LatestChatFragment @Inject constructor() : BaseFragment<LatestChatViewMode
     fun onMsgEvent(chatMsg: ChatProto.ChatMsg){
         val type = chatMsg.type
         when(type){
-            TYPE_MSG -> mViewModel.handleMsg(chatMsg,chatId)
+            TYPE_MSG -> mViewModel.handleMsg(chatMsg)
             TYPE_ADD_FRIEND -> mViewModel.handleAddFriend(chatMsg)
             TYPE_FRIEND_AGREE -> mViewModel.handleFriendAgree(chatMsg)
             TYPE_OVERTIME -> toast(R.string.add_friend_over_time,chatMsg.msg)

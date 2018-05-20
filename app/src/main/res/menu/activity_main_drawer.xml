@@ -45,6 +45,9 @@
         android:id="@+id/change_password"
         android:title="@string/changePassword"/>
 
+    <item android:id="@+id/log_out"
+        android:title="@string/log_out" />
+
     <item android:id="@+id/quit"
         android:title="@string/quit" />
 

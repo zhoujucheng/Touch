@@ -36,17 +36,30 @@ class LoginViewModel @Inject constructor(): BaseViewModel() {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doFinally{ mLoading.value = false }
                         .subscribe({
-                            MyApplication.mUser = it.obj
+                            val user = it.obj
+                            if (user == null){
+                                toast(R.string.unknown_error)
+                                return@subscribe
+                            }
+                            MyApplication.mUser = user
                             MyApplication.mUser?.nickname = MyApplication.mUser?.userName
                             MyApplication.mToken = it.msg
-                            map[TOKEN] = it.msg
                             mLoginEvent.call()
                             val sharedPre = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE)
-                            val editor = sharedPre.edit()
-                            map.forEach {
-                                editor.putString(it.key,it.value)
+                            val id = sharedPre.getLong(ID,0)
+                            if (id <= 0 || id != user.id){
+                                map[TOKEN] = it.msg
+                                map[HEAD_URL] = user.headUrl
+                                map[PHONE] = user.phone ?: ""
+                                map[USER_NAME] = user.userName
+                                val editor = sharedPre.edit()
+                                map.forEach {
+                                    editor.putString(it.key,it.value)
+                                }
+                                editor.putLong(ID,user.id)
+                                editor.commit()
                             }
-                            editor.apply()
+
                         }, {_,_ ->
                             toast(R.string.login_fail)
                         })

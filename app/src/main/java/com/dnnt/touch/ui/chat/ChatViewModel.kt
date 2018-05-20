@@ -63,7 +63,6 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
     }
 
     fun handleSendFail(imMsg: IMMsg){
-
         notifyIMMsgChange(imMsg)
         imMsg.save()
         offset++
@@ -81,5 +80,10 @@ class ChatViewModel @Inject() constructor() : BaseViewModel() {
     fun sendMsg(imMsg: IMMsg){
         MsgHandler.sendMsg(imMsg)
         items.add(0,imMsg)
+    }
+
+    fun clear(){
+        items.clear()
+        offset = 0
     }
 }

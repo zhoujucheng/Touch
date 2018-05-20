@@ -2,6 +2,7 @@ package com.dnnt.touch.ui.main
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -53,12 +54,16 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
     @Inject lateinit var latestChatFragmentProvider: Lazy<LatestChatFragment>
     @Inject lateinit var contactFragmentProvider: Lazy<ContactFragment>
     @Inject lateinit var networkReceiver: NetworkReceiver
+    private lateinit var netChangeListener: NetworkReceiver.NetworkChangeListener
 
     override fun init() {
-        setSupportActionBar(toolbar)
+        if(NetworkReceiver.isNetUsable()){
+            startService(Intent(this,NettyService::class.java))
+        }
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -68,34 +73,38 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         val pagerAdapter = MainPagerAdapter(supportFragmentManager,fragmentList)
         view_pager.adapter = pagerAdapter
 
-        startService(Intent(this,NettyService::class.java))
-
-        debugOnly {
-//            (select from IMMsg::class).list.forEach {
-//                it.delete()
-//            }
-//            (select from LatestChat::class).list.forEach {
-//                it.delete()
-//            }
-//            (select from User::class).list.forEach {
-//                it.delete()
-//            }
-            launch(UI){
-                if (MyApplication.mUser != null){
-                    //TODO Have a better solutions?(user_head may not have init)
-                    while (user_head == null)   delay(100)
-                    Glide.with(this@MainActivity).load(BASE_URL + MyApplication.mUser?.headUrl).into(user_head)
-                    user_name.text = MyApplication.mUser?.userName ?: ""
-                    user_head.setOnClickListener{
-                        if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                            openAlbum()
-                        } else {
-                            ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE)
-                        }
+        launch(UI){
+            if (MyApplication.mUser != null){
+                //TODO Have a better solutions?(user_head may not have init)
+                while (user_head == null)   delay(100)
+                Glide.with(this@MainActivity).load(BASE_URL + MyApplication.mUser?.headUrl).into(user_head)
+                user_name.text = MyApplication.mUser?.userName ?: ""
+                user_head.setOnClickListener{
+                    if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                        openAlbum()
+                    } else {
+                        ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE)
                     }
+                }
+
+            }
+        }
+
+    }
+
+    @Inject fun addListener(context: Context){
+        netChangeListener = object : NetworkReceiver.NetworkChangeListener{
+            override fun networkChanged(status: Int) {
+                if (status > NO_NETWORK){
+                    if(MyApplication.mUser != null){
+                        startService(Intent(context,NettyService::class.java))
+                    }
+                }else{
+                    stopService(Intent(context,NettyService::class.java))
                 }
             }
         }
+        networkReceiver.addListener(netChangeListener)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -109,7 +118,7 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == ACTIVITY_SET_HEAD_REQUEST && resultCode == Activity.RESULT_OK) {
+        if (requestCode == ACTIVITY_SET_HEAD_REQ && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
             if (uri != null){
                 Glide.with(this)
@@ -126,6 +135,8 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
                             isFirstResource: Boolean
                         ): Boolean {
                             if (resource != null){
+                                logi(TAG,"res width: ${resource.width}")
+                                logi(TAG,"res height: ${resource.height}")
                                 val headCache = File(cacheDir.path + "/head.png")
                                 mViewModel.updateHead(resource, headCache)
                             }
@@ -142,7 +153,7 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         val intent = Intent()
         intent.action = Intent.ACTION_GET_CONTENT
         intent.type = "image/*"
-        startActivityForResult(intent, ACTIVITY_SET_HEAD_REQUEST)
+        startActivityForResult(intent, ACTIVITY_SET_HEAD_REQ)
     }
 
     override fun getLayoutId() = R.layout.activity_main
@@ -154,14 +165,16 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        }else{
+            moveTaskToBack(true)
         }
     }
 
     override fun onDestroy() {
+        logi(TAG,"onDestroya")
         stopService(Intent(this,NettyService::class.java))
         super.onDestroy()
+        networkReceiver.removeListener(netChangeListener)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -169,16 +182,23 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
         when (item.itemId) {
             R.id.add_friend -> handleAddFriend()
             R.id.change_password -> {
+//                startActivityForResult(Intent(this,ChangePwdActivity::class.java), ACTIVITY_CHANGE_PWD_REQ)
                 startActivity(ChangePwdActivity::class.java)
             }
-            R.id.quit -> {
+            R.id.log_out -> {
+                MyApplication.mUser = null
                 startActivity(Intent(this,LoginActivity::class.java))
                 this.finish()
+            }
+            R.id.quit -> {
+                super.onBackPressed()
             }
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+
 
     private fun handleAddFriend(){
         val view = View.inflate(this,R.layout.dialog_add_friend,null)
@@ -204,4 +224,6 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
             }
         }
     }
+
+
 }

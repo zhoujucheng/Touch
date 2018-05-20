@@ -18,7 +18,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
-        buildConfigField "String","JKS_FILE_PATH","\"$projectDir/src/main/assets/tomcat_server.cer\""
+        buildConfigField "String", "JKS_FILE_PATH", "\"$projectDir/src/main/assets/tomcat_server.cer\""
     }
     buildTypes {
         release {

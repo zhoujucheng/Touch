@@ -25,6 +25,7 @@ const val PRE_NAME = "touch"
 const val ID = "id"
 const val OLD_PASSWORD = "oldPassword"
 const val NEW_PASSWORD = "newPassword"
+const val HEAD_URL = "headUrl"
 
 const val TYPE_HEARTBEAT = 0
 const val TYPE_MSG = 1
@@ -50,5 +51,15 @@ const val CRASH_DIR = "crash"
 
 const val SPLIT_CHAR = ';'
 
-const val ACTIVITY_SET_HEAD_REQUEST = 1
+const val ACTIVITY_SET_HEAD_REQ = 1
+const val ACTIVITY_CHANGE_PWD_REQ = 2
+
 const val READ_EXTERNAL_STORAGE = 1
+
+const val NO_NETWORK = 0
+const val MOBILE_DATA = 1
+const val WIFI = 2
+
+const val CHANNEL_MSG_ID = "msg"
+
+const val NOTIFICATION_MSG_ID = 1

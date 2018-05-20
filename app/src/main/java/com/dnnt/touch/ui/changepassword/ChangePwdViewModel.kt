@@ -3,9 +3,11 @@ package com.dnnt.touch.ui.changepassword
 import android.content.Context
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.R
+import com.dnnt.touch.base.SingleLiveEvent
 import com.dnnt.touch.network.NetService
 import com.dnnt.touch.ui.base.BaseViewModel
 import com.dnnt.touch.util.*
+import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
 /**
@@ -16,7 +18,9 @@ class ChangePwdViewModel @Inject constructor() : BaseViewModel() {
         val TAG = "ChangePwdViewModel"
     }
 
+
     @Inject lateinit var netService: NetService
+    val successEven = SingleLiveEvent<Void>()
 
     fun changePassword(oldPassword: String, newPassword: String, newPassword1: String){
         when{
@@ -27,12 +31,15 @@ class ChangePwdViewModel @Inject constructor() : BaseViewModel() {
                 val id = MyApplication.mUser?.id ?: 0
                 netService.changePassword(hashMapOf(Pair(ID,id.toString()), Pair(OLD_PASSWORD,oldPassword),
                     Pair(NEW_PASSWORD,newPassword)))
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         val editor = MyApplication.mContext.getSharedPreferences(PRE_NAME, Context.MODE_PRIVATE).edit()
                         editor.remove(PASSWORD)
                         editor.remove(TOKEN)
+                        editor.remove(ID)
                         editor.apply()
                         toast(R.string.change_password_success)
+                        successEven.call()
                     },{msg,_ ->
                         toast(msg)
                     })

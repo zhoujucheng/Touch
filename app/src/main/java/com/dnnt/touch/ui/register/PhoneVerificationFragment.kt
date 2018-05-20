@@ -30,11 +30,15 @@ class PhoneVerificationFragment @Inject constructor() : BaseFragment<RegisterVie
         //获取验证码，60s内不可再点击，防止多次发送验证码
         with(get_code){
             setOnClickListener {
+                phone = user_phone.text.toString()
+                if(phone.length != 11){
+                    toast(R.string.phone_wrong)
+                    return@setOnClickListener
+                }
                 if (NetworkReceiver.isNetUsable()){
                     countDown()
                     isClickable = false
                     text = "60"
-                    phone = user_phone.text.toString()
                     mViewModel. getVerificationCode(phone,codeTag)
                 }
             }

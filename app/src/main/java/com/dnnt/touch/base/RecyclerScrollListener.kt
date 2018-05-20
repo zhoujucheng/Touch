@@ -27,6 +27,7 @@ abstract class RecyclerScrollListener : RecyclerView.OnScrollListener() {
         } else if (!mLoading && visibleCount >= itemCount - firstVisible){
             if ((manager.reverseLayout && dy < 0) || (!manager.reverseLayout && dy > 0)){
                 mLoading = true
+                //fix "cannot call this method in a scroll callback"
                 recyclerView.post {
                     loadMore()
                 }

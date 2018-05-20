@@ -17,7 +17,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
 
         <ImageView
             android:id="@+id/head"
@@ -35,8 +36,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toStartOf="@+id/head"
             app:layout_constraintTop_toTopOf="@+id/head"
-            app:layout_constraintBottom_toBottomOf="@+id/head"
             android:layout_marginEnd="8dp"
+            android:layout_marginTop="8dp"
             android:text="@{user.nickname == null ? user.userName : user.nickname}"/>
 
         <TextView
@@ -44,8 +45,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toStartOf="@+id/nickname"
-            app:layout_constraintTop_toTopOf="@+id/head"
-            app:layout_constraintBottom_toBottomOf="@+id/head"
+            app:layout_constraintTop_toTopOf="@+id/nickname"
+            app:layout_constraintBottom_toBottomOf="@+id/nickname"
             android:layout_marginEnd="8dp"
             android:text="@{item.time}"/>
 
@@ -53,33 +54,36 @@
 
         <TextView
             android:id="@+id/chat_msg"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="@dimen/msg_max_width"
             app:layout_constraintEnd_toStartOf="@+id/head"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/head"
-            android:gravity="end"
-            android:layout_marginStart="@dimen/chat_msg_margin"
+            app:layout_constraintTop_toBottomOf="@+id/nickname"
+            android:background="@drawable/msg_send_bg"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:textIsSelectable="true"
             android:text="@{item.msg}"/>
 
         <ProgressBar
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            app:layout_constraintTop_toTopOf="@+id/head"
-            app:layout_constraintBottom_toBottomOf="@+id/head"
-            app:layout_constraintEnd_toStartOf="@+id/time"
-            android:layout_marginStart="8dp"
+            android:id="@+id/send_progress_bar"
+            android:layout_width="@dimen/msg_status_width"
+            android:layout_height="@dimen/msg_status_width"
+            app:layout_constraintTop_toTopOf="@+id/chat_msg"
+            app:layout_constraintBottom_toBottomOf="@+id/chat_msg"
+            app:layout_constraintEnd_toStartOf="@+id/chat_msg"
+            android:layout_marginEnd="8dp"
             android:visibility="@{item.type == ConstantKt.TYPE_MSG ? View.VISIBLE : View.GONE}"/>
 
         <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            app:layout_constraintTop_toTopOf="@+id/head"
-            app:layout_constraintBottom_toBottomOf="@+id/head"
-            app:layout_constraintEnd_toStartOf="@+id/time"
-            android:layout_marginStart="8dp"
+            android:layout_width="@dimen/msg_status_width"
+            android:layout_height="@dimen/msg_status_width"
+            app:layout_constraintTop_toTopOf="@+id/chat_msg"
+            app:layout_constraintBottom_toBottomOf="@+id/chat_msg"
+            app:layout_constraintEnd_toStartOf="@+id/chat_msg"
+            android:layout_marginEnd="8dp"
             android:src="@drawable/send_fail"
-            android:visibility="@{item.type == ConstantKt.TYPE_SEND_FAIL ? View.VISIBLE : View.GONE}"/>
+            android:visibility="@{item.type == ConstantKt.TYPE_SEND_FAIL ? View.VISIBLE : View.GONE}" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

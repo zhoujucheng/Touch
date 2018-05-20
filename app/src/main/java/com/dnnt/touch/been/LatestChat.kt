@@ -15,4 +15,4 @@ import java.util.*
 data class LatestChat(@PrimaryKey var from: Long = 0, @PrimaryKey var to: Long = 0,
                       @Column var headUrl: String = "", @Column var nickname: String = "",
                       @Column var time: Date = Date(), @Column var latestMsg: String = "",
-                      @Column var type: Int = 0)
+                      @Column var type: Int = 0,@Column var num: Int = 0)

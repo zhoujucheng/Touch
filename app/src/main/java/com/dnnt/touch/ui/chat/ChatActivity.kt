@@ -16,16 +16,25 @@ import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 import javax.inject.Inject
 import android.arch.lifecycle.Observer
+import android.content.Intent
 
 class ChatActivity : BaseActivity<ChatViewModel>() {
 
     private var chatUserId = 0L
     private lateinit var mAdapter: ChatAdapter
 
-    override fun init() {
-        EventBus.getDefault().register(this)
 
+    override fun init() {
+
+
+        EventBus.getDefault().register(this)
         chatUserId = intent.getLongExtra(CHAT_USER_ID,0)
+
+        refresh()
+
+    }
+
+    private fun refresh(){
         val user = mViewModel.initData(chatUserId)
         mAdapter = ChatAdapter(user)
         mViewModel.itemChangeEvent.observe(this,Observer {
@@ -35,7 +44,6 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
         initRecyclerView()
 
         setSendClickListener()
-
     }
 
     private fun initRecyclerView(){
@@ -91,6 +99,14 @@ class ChatActivity : BaseActivity<ChatViewModel>() {
         mViewModel = viewModel
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        logi("onNewIntent","invoke")
+        chatUserId = intent?.getLongExtra(CHAT_USER_ID,0L) ?: 0L
+        EventBus.getDefault().post(LatestChat(chatUserId))
+        mViewModel.clear()
+        refresh()
+    }
 
 
 }

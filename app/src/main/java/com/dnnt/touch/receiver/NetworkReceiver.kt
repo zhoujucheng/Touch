@@ -6,6 +6,9 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import com.dnnt.touch.MyApplication
 import com.dnnt.touch.netty.NettyService
+import com.dnnt.touch.util.MOBILE_DATA
+import com.dnnt.touch.util.NO_NETWORK
+import com.dnnt.touch.util.WIFI
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,10 +20,6 @@ import javax.inject.Singleton
 class NetworkReceiver @Inject constructor() : BroadcastReceiver() {
 
     companion object {
-        const val NO_NETWORK = 0
-
-        const val MOBILE_DATA = 1
-        const val WIFI = 2
 
         var netStatus = NO_NETWORK
             private set
@@ -43,20 +42,16 @@ class NetworkReceiver @Inject constructor() : BroadcastReceiver() {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkInfo = connectivityManager.activeNetworkInfo
         return if (networkInfo != null && networkInfo.isConnected){
-            if (MyApplication.mUser != null){
-                context.startService(Intent(context,NettyService::class.java))
-            }
             if (networkInfo.type == ConnectivityManager.TYPE_WIFI){
                 WIFI
             }else{
                 MOBILE_DATA
             }
+
         }else{
-            if (MyApplication.mUser != null){
-                context.stopService(Intent(context,NettyService::class.java))
-            }
             NO_NETWORK
         }
+
     }
 
     fun addListener(listener: NetworkChangeListener) =

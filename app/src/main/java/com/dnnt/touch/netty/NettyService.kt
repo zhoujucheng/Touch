@@ -34,10 +34,10 @@ class NettyService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
        Thread{
-            while (running){
-                logi(TAG,"start netty service")
-                startNetty()
-            }
+           while (running){
+               logi(TAG,"start netty service")
+               startNetty()
+           }
         }.start()
         return super.onStartCommand(intent, flags, startId)
     }
@@ -90,14 +90,8 @@ class NettyService : Service() {
 
     private fun terminate(){
         running = false
-        val ctx = MsgHandler.ctx
-        if (ctx.executor().isTerminated || ctx.executor().isShutdown){
-            return
-        }
-        MsgHandler.ctx.close()
-//        thread.state = Thread.State.
+        MsgHandler.close()
     }
 
-    class NettyBinder : Binder(){
-    }
+    class NettyBinder : Binder()
 }

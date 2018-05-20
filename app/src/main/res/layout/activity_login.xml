@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-        <import type="android.view.View" />
         <variable
             name="viewModel"
             type="com.dnnt.touch.ui.login.LoginViewModel" />
@@ -12,14 +11,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"
         android:orientation="vertical"
         android:padding="@dimen/activity_margin"
+        android:background="@drawable/login_background"
         tools:context="com.dnnt.touch.ui.login.LoginActivity">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TOUCH"
+            android:textSize="36sp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center_horizontal"
+            android:textStyle="bold|italic" />
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/name_or_phone"
@@ -27,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/name_or_phone"
                 android:maxLines="1"
-                android:maxLength="11"
+                android:maxLength="16"
                 android:singleLine="true" />
 
         </android.support.design.widget.TextInputLayout>
@@ -54,6 +64,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="?android:textAppearanceSmall"
+            android:background="@drawable/ripple_btn_bg"
             android:layout_marginTop="16dp"
             android:text="@string/btn_login" />
 
@@ -63,6 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/new_user_register"
+            android:layout_gravity="center_horizontal"
             android:textColor="@color/link"/>
 
         <TextView
@@ -71,6 +83,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/forgot_password"
+            android:layout_gravity="center_horizontal"
             android:textColor="@color/link"/>
 
     </LinearLayout>
