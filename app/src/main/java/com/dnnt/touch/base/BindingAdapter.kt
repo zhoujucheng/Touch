@@ -44,6 +44,7 @@ object BindingAdapter{
 
     @BindingAdapter("items")
     @JvmStatic
+    @Suppress("UNCHECKED_CAST")
     fun setItems(recyclerView: RecyclerView, items: List<Any>) {
         val adapter = recyclerView.adapter as? BaseAdapter<Any>
         adapter?.setList(items)

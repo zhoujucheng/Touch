@@ -54,7 +54,7 @@ interface NetService {
 
     @POST("user/uploadErrFile")
     @Multipart
-    fun uploadErrFile(@Part uploadFile: MultipartBody.Part): Call<Unit>
+    fun uploadErrFile(@Part uploadFile: MultipartBody.Part): Call<Json<Void>>
 
     @POST("user/updateUserName")
     @FormUrlEncoded

@@ -136,7 +136,7 @@ class LatestChatViewModel @Inject constructor() : BaseViewModel(){
         EventBus.getDefault().post(user)
         items.forEachIndexed { i,item ->
             if (item.from == chatMsg.from){
-                item.nickname = item.nickname
+                item.nickname = chatMsg.msg
                 item.async().save()
                 itemChangeEvent.value = i
                 return

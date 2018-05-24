@@ -7,10 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.ViewPager
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
 import android.view.MenuItem
@@ -64,20 +66,19 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
-
         nav_view.setNavigationItemSelectedListener(this)
-
-        val fragmentList = listOf<Lazy<out DaggerFragment>>(latestChatFragmentProvider, contactFragmentProvider)
-        val pagerAdapter = MainPagerAdapter(supportFragmentManager,fragmentList)
-        view_pager.adapter = pagerAdapter
 
         mViewModel.userNameLiveData.observe(this, Observer {
             user_name.text = it ?: ""
         })
 
+        initHeaderLayout()
+        initViewPager()
+    }
+
+    private fun initHeaderLayout(){
         launch(UI){
             if (MyApplication.mUser != null){
                 //TODO Have a better solutions(user_head may not have init)?
@@ -97,7 +98,40 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
 
             }
         }
+    }
 
+    private fun initViewPager(){
+        val fragmentList = listOf<Lazy<out DaggerFragment>>(latestChatFragmentProvider, contactFragmentProvider)
+        val pagerAdapter = MainPagerAdapter(supportFragmentManager,fragmentList)
+        view_pager.adapter = pagerAdapter
+
+        tag_latest_msg.setColorFilter(ContextCompat.getColor(this,R.color.btn_bg))
+
+        view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageScrollStateChanged(state: Int) {}
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+
+            override fun onPageSelected(position: Int) {
+                when(position){
+                    0 -> tagMsgClick()
+                    1 -> tagContactClick()
+                }
+            }
+
+        })
+        tag_latest_msg.setOnClickListener { view_pager.setCurrentItem(0,true) }
+        tag_contact.setOnClickListener { view_pager.setCurrentItem(1,true) }
+    }
+
+    fun tagContactClick(){
+        tag_contact.setColorFilter(ContextCompat.getColor(this,R.color.btn_bg))
+        tag_latest_msg.setColorFilter(ContextCompat.getColor(this,R.color.gray))
+    }
+
+    fun tagMsgClick(){
+        tag_contact.setColorFilter(ContextCompat.getColor(this,R.color.gray))
+        tag_latest_msg.setColorFilter(ContextCompat.getColor(this,R.color.btn_bg))
     }
 
     @Inject fun addListener(context: Context){

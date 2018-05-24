@@ -77,11 +77,13 @@ class CrashHandler @Inject constructor(context: Context): Thread.UncaughtExcepti
             val l = launch(CommonPool) {
                 //I don't care if it is successful or not
                 if (NetworkReceiver.isNetUsable()){
-                    mNetService.uploadErrFile(filePart).execute()
+                    val response = mNetService.uploadErrFile(filePart).execute()
+                    if(response.isSuccessful && response.body()?.successful == true){
+                        errFile.delete()
+                    }
                 }
             }
             l.join()
         }
-        errFile.delete()
     }
 }

@@ -9,4 +9,6 @@
     <color name="error">#FF0000</color>
 
     <color name="btn_bg">#82a6f5</color>
+
+    <color name="gray">#7f7f7f</color>
 </resources>
