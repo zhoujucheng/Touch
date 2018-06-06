@@ -33,19 +33,8 @@ class LoginActivity : BaseActivity<LoginViewModel>(){
             startActivity(ResetPwdActivity::class.java)
         }
 
-//        debugOnly {
-//            go_register.performClick()
-//        }
 
-
-        debugOnly {
-            name_or_phone.setText("18255132583")
-            password.setText("123456")
-//            launch(UI) {
-//                login.performClick()
-//            }
-            logi("LoginActivity",Date(System.currentTimeMillis()).toString())
-        }
+        logi("LoginActivity",Date(System.currentTimeMillis()).toString())
 
         val nameOrPhone = getString(NAME_OR_PHONE)
         if (!nameOrPhone.isEmpty()){

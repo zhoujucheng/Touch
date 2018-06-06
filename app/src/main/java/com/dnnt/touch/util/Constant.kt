@@ -47,7 +47,7 @@ const val TYPE_OTHER_LOGIN = 0x800
 const val TYPE_UPDATE_USER_NAME = 0x1000
 
 
-const val NAME_MIN_LENGTH = 4
+const val NAME_MIN_LENGTH = 1
 const val NAME_MAX_LENGTH = 16
 const val PWD_MAX_LEN = 16
 const val PWD_MIN_LEN = 6

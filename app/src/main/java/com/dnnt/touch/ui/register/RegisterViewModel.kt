@@ -105,8 +105,10 @@ class RegisterViewModel @Inject constructor(): BaseViewModel() {
                 val map = hashMapOf(Pair(PASSWORD,password), Pair(PHONE,phone),
                     Pair(VERIFICATION_CODE,code))
                 mNetService.resetPassword(map,cookie)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
                         removeSensitiveInfo(MyApplication.mContext)
+                        mFinishEvent.call()
                         toast(R.string.reset_password_success)
                     },{msg,_ ->
                         toast(msg)

@@ -20,7 +20,7 @@
     <!-- Strings related to register -->
     <string name="user_password_again">再次输入密码</string>
     <string name="user_name">用户名</string>
-    <string name="user_name_hint">用户名,不得以数字开头,至少为4位，最多为16位</string>
+    <string name="user_name_hint">用户名,不能为空,不得以数字开头,最多为16位</string>
     <string name="verification_code">验证码</string>
     <string name="get_verification_code">获取验证码</string>
     <string name="register">注册</string>

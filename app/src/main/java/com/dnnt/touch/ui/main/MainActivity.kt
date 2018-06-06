@@ -269,6 +269,10 @@ class MainActivity : BaseActivity<MainViewModel>(), NavigationView.OnNavigationI
             dialog_btn.setText(R.string.add_friend)
             dialog_btn.setOnClickListener {
                 val nameOrPhone = dialog_text.text.toString()
+                if (nameOrPhone.isEmpty()){
+                    toast(R.string.name_or_phone_empty)
+                    return@setOnClickListener
+                }
                 when {
                     isNameLegal(nameOrPhone) || nameOrPhone.matches(Regex("\\d{11}")) -> {
                         val user = MyApplication.mUser as User
